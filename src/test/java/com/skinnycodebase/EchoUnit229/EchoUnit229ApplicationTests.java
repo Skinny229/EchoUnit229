@@ -1,0 +1,13 @@
+package com.skinnycodebase.EchoUnit229;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class EchoUnit229ApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
