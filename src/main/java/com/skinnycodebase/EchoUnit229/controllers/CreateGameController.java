@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1")
 @RestController
 public class CreateGameController {
 
