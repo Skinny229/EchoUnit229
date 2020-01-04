@@ -1,0 +1,87 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    /*background-color: #1B7BD3;*/
+    background: linear-gradient(#1E7FD9, #01529C);
+    color: white;
+    font-family: Segoe UI, Helvetica, sans-serif;
+    margin: 0;
+}
+
+.header {
+    padding-top: 60%;
+}
+
+.header h1 {
+
+    margin-bottom: 0;
+    font-size: 2.2em;
+    font-weight: bold;
+}
+
+.header h2 {
+    margin-top: 0;
+    font-weight: lighter;
+    font-size: 1.2em
+}
+
+hr {
+    width:15%;margin:0 auto;
+    background-color: white;
+    border-color: transparent;
+    height: 2px;
+
+}
+
+.flex-item input {
+    border-color: transparent;
+    border-radius: 25px;
+    width: 230px;
+    height: 48px;
+    color: #2B2D2F;
+    background-color: white;
+    font-weight: bolder;
+
+    box-shadow: 0px 6px 40px -7px;
+
+}
+
+.flex-item p {
+
+}
+
+.flex-container {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    /*align-items: center;*/
+    justify-content: center;
+}
+.row {
+    width: auto;
+    /*border: 1px solid blue;*/
+}
+
+#buttons {
+    margin-top: 80%;
+}
+
+.flex-item {
+    /*background-color: tomato;*/
+    /*padding: 5px;*/
+    /*width: 20px;*/
+    /*height: 20px;*/
+    /*margin: 10px;*/
+    /*line-height: 20px;*/
+    /*color: white;*/
+    /*font-weight: bold;*/
+    /*font-size: 2em;*/
+    text-align: center;
+}

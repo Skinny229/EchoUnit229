@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 
 
-    @GetMapping("/")
+    @GetMapping(value = "/")
     @ResponseStatus(HttpStatus.OK)
     public String getTestingHome(){
         return "Hello. You should not be here just yet";
