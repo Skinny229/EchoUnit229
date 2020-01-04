@@ -2,8 +2,6 @@ package com.skinnycodebase.EchoUnit229;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.BoisMessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.MessageIntake;
-import com.skinnycodebase.EchoUnit229.discordintegration.Secrets;
-import javassist.bytecode.stackmap.BasicBlock;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.slf4j.Logger;
@@ -28,7 +26,7 @@ public class EchoUnit229Application {
     public static void botStartup() {
         JDA jda = null;
         try {
-             jda = new JDABuilder(Secrets.BOT_CLIENT_SECRET).build();
+             jda = new JDABuilder(DeploymentSettings.BOT_AUTH_TOKEN).build();
         } catch (Exception e) {
             logger.error(e.toString());
         }
