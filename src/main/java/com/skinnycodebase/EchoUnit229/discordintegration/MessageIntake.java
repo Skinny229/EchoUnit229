@@ -3,7 +3,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -18,9 +18,11 @@ public class MessageIntake extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
     {
+
         Message msg = event.getMessage();
         if (msg.getContentRaw().equals("!ping") && event.getMember().getId().equals("142673915964030976"))
         {
+            User a = event.getAuthor();
             MessageChannel channel = event.getChannel();
              channel = event.getGuild().getTextChannelById("661307549496115232");
 
