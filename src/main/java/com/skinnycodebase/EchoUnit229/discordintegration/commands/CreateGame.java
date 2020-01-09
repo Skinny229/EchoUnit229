@@ -4,6 +4,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 import com.skinnycodebase.EchoUnit229.models.EchoGame;
 import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.hibernate.service.spi.InjectService;
@@ -45,17 +46,17 @@ public class CreateGame {
                 String boisRole = event.getGuild().getRoleById("645047793500815387").getAsMention();
                 MessageChannel channel = event.getGuild().getTextChannelById("661307549496115232");
 
-                registerGameToDB(lobbyID, event.getAuthor().getId(), false);
-
-                updatePinnedMessageGameList();
 
                 fullMessage.append("Hey ");
                 fullMessage.append("@BOISTEMP");//TODO::REPLACE ME
                 fullMessage.append(" a public game has been created!");
-                fullMessage.append("\nFollow the link to join: " + createLink(lobbyID));
-                fullMessage.append("\nOR checkout the LFG-BOT pins for all public games");
 
                 channel.sendMessage(fullMessage.toString()).queue();
+
+                registerGameToDB(lobbyID, event.getAuthor().getId(), false);
+
+                updatePinnedMessageGameList(event);
+
 
             }
         }
@@ -69,7 +70,7 @@ public class CreateGame {
     }
 
 
-    public void registerGameToDB(String lobbyID, String plyID, boolean isPrivate) {
+    private void registerGameToDB(String lobbyID, String plyID, boolean isPrivate) {
 
 
         EchoGame game = new EchoGame();
@@ -81,10 +82,9 @@ public class CreateGame {
 
         echoGameService.save(game);
 
-
     }
 
-    private  void updatePinnedMessageGameList() {
+    private  void updatePinnedMessageGameList(MessageReceivedEvent event) {
 
         Iterable<EchoGame> list = echoGameService.findAll();
         ArrayList<EchoGame> publicGames = new ArrayList<>();
@@ -93,15 +93,23 @@ public class CreateGame {
                 publicGames.add(game);
         }
 
+        EmbedBuilder builder = new EmbedBuilder();
 
+        builder.setTitle("Current active games");
+        builder.setColor(53380);
+
+        for(EchoGame game: publicGames)
+            builder.addField(event.getGuild().getMemberById(game.getPlayerID()).getUser().getName() + "'s game",createLink(game.getLobbyID()),true);
+
+
+       event.getGuild().getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
 
     }
 
 
     private static String createLink(String ID) {
+        return "http://echovrprotocol.com/api/v1/genGame?gameID=" + ID;
 
-        String link = "http://echovrprotocol.com/api/v1/genGame?gameID=" + ID;
-        return link;
     }
 
     private static boolean isValidID(String a) {

@@ -29,9 +29,9 @@ public class BoisMessageIntake extends ListenerAdapter {
 
         String rawMsg = event.getMessage().getContentRaw();
 
-        if(rawMsg.startsWith("-")){
+        if(rawMsg.startsWith("-") && event.getMember().getId().equals("142673915964030976")){
 
-            logger.info("Possible command attempt by ["+ event.getMember().getNickname() +"] with: " + rawMsg);
+            logger.info("Possible command attempt by ["+ event.getMember().getUser().getName() +"] with: " + rawMsg);
 
             String command;
             if(rawMsg.indexOf(' ') == -1)
