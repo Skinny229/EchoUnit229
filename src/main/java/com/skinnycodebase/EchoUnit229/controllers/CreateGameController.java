@@ -11,7 +11,7 @@ public class CreateGameController {
 
     @GetMapping(value ="/genGame",produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public String generateGameFromLink(@RequestParam("genGame") String input){
+    public String generateGameFromLink(@RequestParam("lobbyID") String input){
 
         StringBuilder builder = new StringBuilder();
 

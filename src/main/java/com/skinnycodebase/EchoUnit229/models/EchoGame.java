@@ -1,12 +1,11 @@
 package com.skinnycodebase.EchoUnit229.models;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 public class EchoGame {
@@ -24,7 +23,7 @@ public class EchoGame {
     //EchoVR lobbyID
     private String lobbyID;
 
-    private Date timeGameCreated;
+    private LocalDateTime timeGameCreated;
 
     public long getId() {
         return id;
@@ -58,11 +57,11 @@ public class EchoGame {
         this.lobbyID = lobbyID;
     }
 
-    public Date getTimeGameCreated() {
+    public LocalDateTime getTimeGameCreated() {
         return timeGameCreated;
     }
 
-    public void setTimeGameCreated(Date timeGameCreated) {
+    public void setTimeGameCreated(LocalDateTime timeGameCreated) {
         this.timeGameCreated = timeGameCreated;
     }
 }
