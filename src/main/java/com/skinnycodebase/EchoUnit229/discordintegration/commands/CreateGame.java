@@ -1,6 +1,7 @@
 package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 
 
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -27,16 +28,28 @@ public class CreateGame {
                 StringBuilder fullMessage = new StringBuilder();
 
                 String boisRole = event.getGuild().getRoleById("645047793500815387").getAsMention();
+                MessageChannel channel = event.getGuild().getTextChannelById("661307549496115232");
 
                 fullMessage.append("Hey ");
-                fullMessage.append(boisRole);//@bois
+                fullMessage.append("@BOISROLETEMP");//@bois
                 fullMessage.append(" a public game has been created!");
+                fullMessage.append("\n Follow the link to join: " + createLink(ID));
+
+                channel.sendMessage(fullMessage.toString()).queue();
+
+
 
             }
         }
 
     }
 
+
+    private static String createLink(String ID){
+
+        String link = "http://echovrprotocol.com/api/v1/genGame?gameID=" + ID;
+        return link;
+    }
 
     private static boolean isValidID(String a) {
         return a.length() == 9;
