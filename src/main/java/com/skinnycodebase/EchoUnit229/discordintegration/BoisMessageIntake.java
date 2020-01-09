@@ -32,7 +32,7 @@ public class BoisMessageIntake extends ListenerAdapter {
             switch(command.toUpperCase()){
 
                 case "CREATEGAME":
-                    CreateGame.run(event);
+                    new CreateGame().run(event);
                     break;
                 case "FLUSH":
                     break;

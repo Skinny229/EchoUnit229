@@ -3,6 +3,7 @@ package com.skinnycodebase.EchoUnit229;
 import com.skinnycodebase.EchoUnit229.discordintegration.BoisMessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.MessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.RedeployHandler;
+import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
@@ -26,7 +27,8 @@ public class EchoUnit229Application {
 
 
     @EventListener(ApplicationReadyEvent.class)
-    public static void botStartup() {
+    public static void botStartup(){
+
         JDA jda = null;
         try {
             jda = new JDABuilder(DeploymentSettings.BOT_AUTH_TOKEN).build();

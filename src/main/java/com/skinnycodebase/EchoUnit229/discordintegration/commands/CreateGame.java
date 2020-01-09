@@ -3,20 +3,26 @@ package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 
 import com.skinnycodebase.EchoUnit229.models.EchoGame;
 import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
+import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Component
 public class CreateGame {
 
+    @Autowired
+    private EchoGameService echoGameService;
 
-    public static void run(MessageReceivedEvent event) {
+    public  void run(MessageReceivedEvent event) {
 
 
         ArrayList<String> cmdbreakdown = new ArrayList(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
@@ -60,10 +66,8 @@ public class CreateGame {
     }
 
 
-    @Autowired
-    private static EchoGameRepository echoGameRepository;
+    private void registerGameToDB(String lobbyID, String plyID, boolean isPrivate) {
 
-    private static void registerGameToDB(String lobbyID, String plyID, boolean isPrivate) {
 
         EchoGame game = new EchoGame();
 
@@ -72,13 +76,13 @@ public class CreateGame {
         game.setPrivate(isPrivate);
         game.setTimeGameCreated(LocalDateTime.now());
 
-        echoGameRepository.save(game);
+        echoGameService.save(game);
 
     }
 
-    private static void updatePinnedMessageGameList() {
+    private  void updatePinnedMessageGameList() {
 
-        Iterable<EchoGame> list = echoGameRepository.findAll();
+        Iterable<EchoGame> list = echoGameService.findAll();
         ArrayList<EchoGame> publicGames = new ArrayList<>();
         for (EchoGame game : list){
             if (!game.isPrivate() && ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) < 45)
