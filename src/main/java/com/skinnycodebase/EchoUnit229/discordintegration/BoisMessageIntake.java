@@ -1,6 +1,7 @@
 package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
+import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -8,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class BoisMessageIntake extends ListenerAdapter {
@@ -17,8 +16,13 @@ public class BoisMessageIntake extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(BoisMessageIntake.class);
 
-    @Autowired
+
     CreateGame createGame;
+
+    @Autowired
+    public BoisMessageIntake(CreateGame createGame){
+        this.createGame = createGame;
+    }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event){

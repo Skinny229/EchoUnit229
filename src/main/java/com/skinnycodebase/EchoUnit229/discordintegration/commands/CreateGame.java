@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @Component
-@Configurable
 public class CreateGame {
 
     @Autowired

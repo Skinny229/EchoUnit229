@@ -27,6 +27,8 @@ public class EchoUnit229Application {
     }
 
 
+    @Autowired
+    CreateGame createGame;
 
 
     @EventListener(ApplicationReadyEvent.class)
@@ -41,7 +43,7 @@ public class EchoUnit229Application {
 
         jda.addEventListener(new RedeployHandler());
         jda.addEventListener(new MessageIntake());
-        jda.addEventListener(new BoisMessageIntake());
+        jda.addEventListener(new BoisMessageIntake(createGame));
 
 
     }

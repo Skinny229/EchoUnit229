@@ -9,6 +9,9 @@ import org.springframework.http.MediaType;
 @RestController
 public class CreateGameController {
 
+
+
+
     @GetMapping(value ="/genGame",produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public String generateGameFromLink(@RequestParam("lobbyID") String input){
