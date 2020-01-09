@@ -3,15 +3,20 @@ package com.skinnycodebase.EchoUnit229.service;
 import com.skinnycodebase.EchoUnit229.models.EchoGame;
 import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class EchoGameService {
 
-    @Autowired
+
     private EchoGameRepository echoGameRepository;
 
+    @Autowired
+    public void setEchoGameRepository(EchoGameRepository echoGameRepository) {
+        this.echoGameRepository = echoGameRepository;
+    }
 
     public Iterable<EchoGame> findAll(){
         return echoGameRepository.findAll();

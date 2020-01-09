@@ -4,11 +4,13 @@ import com.skinnycodebase.EchoUnit229.discordintegration.BoisMessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.MessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.RedeployHandler;
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
+import com.skinnycodebase.EchoUnit229.models.EchoGame;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -26,9 +28,9 @@ public class EchoUnit229Application {
 
 
 
-    @EventListener(ApplicationReadyEvent.class)
-    public static void botStartup(){
 
+    @EventListener(ApplicationReadyEvent.class)
+    public void botStartup(){
         JDA jda = null;
         try {
             jda = new JDABuilder(DeploymentSettings.BOT_AUTH_TOKEN).build();

@@ -5,14 +5,20 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class BoisMessageIntake extends ListenerAdapter {
 
 
     private static final Logger logger = LoggerFactory.getLogger(BoisMessageIntake.class);
+
+    @Autowired
+    CreateGame createGame;
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
@@ -32,7 +38,7 @@ public class BoisMessageIntake extends ListenerAdapter {
             switch(command.toUpperCase()){
 
                 case "CREATEGAME":
-                    new CreateGame().run(event);
+                    createGame.run(event);
                     break;
                 case "FLUSH":
                     break;

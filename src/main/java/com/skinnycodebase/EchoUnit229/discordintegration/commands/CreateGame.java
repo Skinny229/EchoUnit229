@@ -6,7 +6,9 @@ import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -17,10 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @Component
+@Configurable
 public class CreateGame {
 
     @Autowired
-    private EchoGameService echoGameService;
+    private EchoGameRepository echoGameService;
+
 
     public  void run(MessageReceivedEvent event) {
 
@@ -66,7 +70,7 @@ public class CreateGame {
     }
 
 
-    private void registerGameToDB(String lobbyID, String plyID, boolean isPrivate) {
+    public void registerGameToDB(String lobbyID, String plyID, boolean isPrivate) {
 
 
         EchoGame game = new EchoGame();
@@ -77,6 +81,7 @@ public class CreateGame {
         game.setTimeGameCreated(LocalDateTime.now());
 
         echoGameService.save(game);
+
 
     }
 
