@@ -31,20 +31,20 @@ public class EchoUnit229Application {
     CreateGame createGame;
 
 
-//    @EventListener(ApplicationReadyEvent.class)
-//    public void botStartup(){
-//        JDA jda = null;
-//        try {
-//            jda = new JDABuilder(DeploymentSettings.BOT_AUTH_TOKEN).build();
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//        }
-//
-//
-//        jda.addEventListener(new RedeployHandler());
-//        jda.addEventListener(new MessageIntake());
-//        jda.addEventListener(new BoisMessageIntake(createGame));
-//
-//
-//    }
+    @EventListener(ApplicationReadyEvent.class)
+    public void botStartup() {
+        JDA jda = null;
+        try {
+            jda = new JDABuilder(DeploymentSettings.BOT_AUTH_TOKEN).build();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+
+        jda.addEventListener(new RedeployHandler());
+        jda.addEventListener(new MessageIntake());
+        jda.addEventListener(new BoisMessageIntake(createGame));
+
+
+    }
 }
