@@ -5,6 +5,7 @@ import com.skinnycodebase.EchoUnit229.models.EchoGame;
 import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.hibernate.service.spi.InjectService;
@@ -23,7 +24,7 @@ import java.util.Arrays;
 public class CreateGame {
 
     @Autowired
-    private EchoGameRepository echoGameService;
+    private EchoGameService echoGameService;
 
 
     public  void run(MessageReceivedEvent event) {
@@ -36,27 +37,32 @@ public class CreateGame {
 
         String lobbyID = cmdbreakdown.get(2);
 
-        //String playersRequested = cmdbreakdown.get(2);
+        StringBuilder fullMessage = new StringBuilder();
+
+
+        if(echoGameService.deleteGameByPlayerID(event.getMember().getId()) && type.equals("private")) {
+            fullMessage.append("Your previous public game has been successfully deleted!\n");
+            updatePinnedMessageGameList(event.getGuild());
+        }
+
 
 
         if (type.equals("public")) {
             if (isValidID(lobbyID)) {
-                StringBuilder fullMessage = new StringBuilder();
+
 
                 String boisRole = event.getGuild().getRoleById("645047793500815387").getAsMention();
                 MessageChannel channel = event.getGuild().getTextChannelById("661307549496115232");
+                echoGameService.deleteGameByPlayerID(event.getMember().getId());
 
-
-                fullMessage.append("Hey ");
                 fullMessage.append("@BOISTEMP");//TODO::REPLACE ME
-                fullMessage.append(" a public game has been created!");
+                fullMessage.append(" the available games have been updated.");
 
                 channel.sendMessage(fullMessage.toString()).queue();
 
                 registerGameToDB(lobbyID, event.getAuthor().getId(), false);
 
-                updatePinnedMessageGameList(event);
-
+                updatePinnedMessageGameList(event.getGuild());
 
             }
         }
@@ -84,7 +90,7 @@ public class CreateGame {
 
     }
 
-    private  void updatePinnedMessageGameList(MessageReceivedEvent event) {
+    private  void updatePinnedMessageGameList(Guild guild) {
 
         Iterable<EchoGame> list = echoGameService.findAll();
         ArrayList<EchoGame> publicGames = new ArrayList<>();
@@ -99,17 +105,16 @@ public class CreateGame {
         builder.setColor(53380);
 
         for(EchoGame game: publicGames)
-            builder.addField(event.getGuild().getMemberById(game.getPlayerID()).getUser().getName() + "'s game",createLink(game.getLobbyID()),true);
+            builder.addField(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game",createLink(game.getLobbyID()),true);
 
 
-       event.getGuild().getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
+       guild.getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
 
     }
 
 
     private static String createLink(String ID) {
-        return "http://echovrprotocol.com/api/v1/genGame?gameID=" + ID;
-
+        return "http://echovrprotocol.com/api/v1/genGame?lobbyID=" + ID;
     }
 
     private static boolean isValidID(String a) {

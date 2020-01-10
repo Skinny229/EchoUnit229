@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-@RequestMapping("/ap1/v2")
+@RequestMapping("/api/v2")
 public class GameJoinerController {
 
 
@@ -18,7 +18,7 @@ public class GameJoinerController {
 
     @GetMapping("/genGame")
     @ResponseStatus(HttpStatus.OK)
-    public String createGame(@RequestParam String gameID){
+    public String createGame(@RequestParam String lobbyID){
         return "joinGame.html";
     }
 }

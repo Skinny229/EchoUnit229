@@ -18,11 +18,20 @@ public class EchoGameService {
         this.echoGameRepository = echoGameRepository;
     }
 
-    public Iterable<EchoGame> findAll(){
+    public Iterable<EchoGame> findAll() {
         return echoGameRepository.findAll();
     }
 
-    public EchoGame save(EchoGame game){
+    public EchoGame save(EchoGame game) {
         return echoGameRepository.save(game);
+    }
+
+    public boolean deleteGameByPlayerID(String playerID) {
+        for (EchoGame game : findAll())
+            if (game.getPlayerID().equals(playerID)){
+            echoGameRepository.deleteById(game.getId());
+            return true;
+        }
+        return false;
     }
 }

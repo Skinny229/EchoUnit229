@@ -17,7 +17,7 @@ public class BoisMessageIntake extends ListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(BoisMessageIntake.class);
 
 
-    CreateGame createGame;
+   private CreateGame createGame;
 
     @Autowired
     public BoisMessageIntake(CreateGame createGame){
