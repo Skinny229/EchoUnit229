@@ -103,7 +103,7 @@ public class CreateGameController {
                 "            <div class=\"flex-item\">\n" +
                 "                <div class=\"header\">\n" +
                 "                <h1>Welcome!</h1>\n" +
-                "                <h2>The game has been created!</h2>\n" +
+                "                <h2>The echoprotocol link has been generated!</h2>\n" +
                 "                </div>\n" +
                 "            </div>\n" +
                 "            <div class=\"flex-item\" id=\"buttons\">\n" +
