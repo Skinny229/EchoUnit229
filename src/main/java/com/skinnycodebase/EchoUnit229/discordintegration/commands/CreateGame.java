@@ -97,19 +97,18 @@ public class CreateGame {
 
 
 
-        EmbedBuilder builder = new EmbedBuilder();
 
 
-        builder.setColor(new Color(11,243,8));
+
 
         for (EchoGame game : publicGames){
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(new Color(11,243,8));
             builder.setTitle(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game", createLink(game.getLobbyID()));
-            builder.addField( "Time Created since last bot update: ", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
-
+            builder.addField( "Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
+            guild.getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
         }
 
-
-        guild.getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
 
     }
 
