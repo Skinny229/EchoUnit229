@@ -1,6 +1,7 @@
 package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
+import com.skinnycodebase.EchoUnit229.discordintegration.commands.DelMyGame;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -17,11 +18,13 @@ public class BoisMessageIntake extends ListenerAdapter {
 
 
    private CreateGame createGame;
-
+   private DelMyGame delMyGame;
     @Autowired
-    public BoisMessageIntake(CreateGame createGame){
+    public BoisMessageIntake(CreateGame createGame, DelMyGame delMyGame){
         this.createGame = createGame;
+        this.delMyGame = delMyGame;
     }
+
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
@@ -49,7 +52,8 @@ public class BoisMessageIntake extends ListenerAdapter {
                     break;
                 case "LISTGAMES":
                     break;
-                case "DELETEGAME":
+                case "DELMYGAME":
+                    delMyGame.run(event);
                     break;
                 default:
             }

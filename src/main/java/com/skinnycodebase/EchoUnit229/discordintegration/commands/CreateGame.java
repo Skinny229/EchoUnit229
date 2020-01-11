@@ -29,7 +29,6 @@ public class CreateGame {
 
         ArrayList<String> cmdbreakdown = new ArrayList(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 
-
         String type = cmdbreakdown.get(1);
 
         String lobbyID = cmdbreakdown.get(2);
@@ -53,7 +52,7 @@ public class CreateGame {
 
                 event.getMessage().delete().queue();
 
-                updatePinnedMessageGameList(event.getGuild());
+                updatePinnedMessageGameList(event.getGuild(), echoGameService);
 
                 channel.sendMessage(fullMessage.toString()).queue();
 
@@ -81,13 +80,13 @@ public class CreateGame {
 
     }
 
-    private void updatePinnedMessageGameList(Guild guild) {
+    public static void updatePinnedMessageGameList(Guild guild, EchoGameService service) {
 
         for (Message msg : guild.getTextChannelById("661307549496115232").getIterableHistory())
             if(msg.getMember().getUser().getId().equals("661304672832847872"))
                 msg.delete().queue();
 
-        Iterable<EchoGame> list = echoGameService.findAll();
+        Iterable<EchoGame> list = service.findAll();
         ArrayList<EchoGame> publicGames = new ArrayList<>();
 
 

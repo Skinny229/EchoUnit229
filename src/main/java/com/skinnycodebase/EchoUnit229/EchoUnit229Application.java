@@ -1,9 +1,9 @@
 package com.skinnycodebase.EchoUnit229;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.BoisMessageIntake;
-import com.skinnycodebase.EchoUnit229.discordintegration.MessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.RedeployHandler;
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
+import com.skinnycodebase.EchoUnit229.discordintegration.commands.DelMyGame;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
@@ -29,6 +29,9 @@ public class EchoUnit229Application {
     @Autowired
     CreateGame createGame;
 
+    @Autowired
+    DelMyGame delMyGame;
+
 
     @EventListener(ApplicationReadyEvent.class)
     public void botStartup() {
@@ -41,8 +44,7 @@ public class EchoUnit229Application {
 
 
         jda.addEventListener(new RedeployHandler());
-        jda.addEventListener(new MessageIntake());
-        jda.addEventListener(new BoisMessageIntake(createGame));
+        jda.addEventListener(new BoisMessageIntake(createGame, delMyGame));
 
 
     }
