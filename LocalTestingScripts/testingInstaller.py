@@ -1,24 +1,11 @@
-import easygui, winreg, os, string
-
+import os, string
 
 def getOculusInstallPath():
     path = os.popen('echo %OculusBase%').read().strip()
     return path
 
 
-def setTxtExeLocation(path):
-    file = open("EchoExeLocation.txt", "w")
-    file.write(path)
-    return
-    
-
-def setRegistryToLaunchScript():
-    #TODO Implement me
-
-    return
-
 def goInstall():
-    hasEchoMoved = easygui.ynbox('Have you modified ECHO VRs install location?', 'EchoRegistryInstaller', ('Yes', 'No'))
 
 
     if hasEchoMoved:

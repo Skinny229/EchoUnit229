@@ -4,7 +4,6 @@ import com.skinnycodebase.EchoUnit229.discordintegration.BoisMessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.MessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.RedeployHandler;
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
-import com.skinnycodebase.EchoUnit229.models.EchoGame;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 

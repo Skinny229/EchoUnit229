@@ -13,12 +13,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class GameJoinerController {
 
 
-
-
-
     @GetMapping("/genGame")
     @ResponseStatus(HttpStatus.OK)
-    public String createGame(@RequestParam String lobbyID){
+    public String createGame(@RequestParam String lobbyID) {
         return "joinGame.html";
     }
 }

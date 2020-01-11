@@ -1,36 +1,26 @@
-import sys, string, subprocess
+import os, string, sys, subprocess
+     
+def getOculusInstallPath():
+    path = os.popen('echo %OculusBase%').read().strip()
+    return path
+
 
 def getEchoExe():
-    file = open("EchoExeLocation.txt", "r")
-    exe = file.readline()
-    print(exe)
-    return exe
+    echoPath = getOculusInstallPath() + "Software\Software\\ready-at-dawn-echo-arena\\bin\win7\echovr.exe"
+    return echoPath
+
+def setUpEnviromentVariable():
+    ##TO BE Implemented in ALPHA 0.2
+      ##subprocess.call(['setx.exe', 'htp])
+    return
 
 def launchGame():
 
-    idandspec = sys.argv[1][11:]
-
-    split = idandspec.split("/")
-
-    lobbyid = split[0]
-    
-    
-    specSel = split[1]
-
+    lobbyid = sys.argv[1][13:]
     print(lobbyid)
-    print(specSel)
-
-    lobbyArg = '-lobbyid ' + lobbyid
-
-    if specSel == 'y':
-        subprocess.run([getEchoExe(), lobbyArg,"-spectatorstream"])
-        return
-    if specSel == 'n':
-        subprocess.run([getEchoExe(), lobbArg])
-    else:
-        print("Defaulting....")
-        subprocess.run([getEchoExe(), "-spectatorstream"])
-
+    lobbyArg = " -lobbyid %s" %(lobbyid)
+    print(lobbyArg)
+    subprocess.run([getEchoExe(),"-lobbyid", lobbyid])
     return
 
 launchGame()

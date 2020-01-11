@@ -10,11 +10,9 @@ import org.springframework.http.MediaType;
 public class CreateGameController {
 
 
-
-
-    @GetMapping(value ="/genGame",produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/genGame", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public String generateGameFromLink(@RequestParam("lobbyID") String input){
+    public String generateGameFromLink(@RequestParam("lobbyID") String input) {
 
         StringBuilder builder = new StringBuilder();
 
@@ -92,12 +90,12 @@ public class CreateGameController {
                 "    font-weight: bolder;\n" +
                 "    font-size: 1em;\n" +
                 "\n" +
-                "    box-shadow: 0px 6px 40px -7px grey;"+
+                "    box-shadow: 0px 6px 40px -7px grey;" +
                 "}\n" +
                 ".flex-item {\n" +
                 "    text-align: center;\n" +
-                "}"+
-                "</style>\n"+
+                "}" +
+                "</style>\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "    <div class=\"flex-container\">\n" +

@@ -1,7 +1,6 @@
 package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
-import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;

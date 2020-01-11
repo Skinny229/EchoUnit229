@@ -2,17 +2,13 @@ package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 
 
 import com.skinnycodebase.EchoUnit229.models.EchoGame;
-import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -27,7 +23,7 @@ public class CreateGame {
     private EchoGameService echoGameService;
 
 
-    public  void run(MessageReceivedEvent event) {
+    public void run(MessageReceivedEvent event) {
 
 
         ArrayList<String> cmdbreakdown = new ArrayList(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
@@ -40,11 +36,10 @@ public class CreateGame {
         StringBuilder fullMessage = new StringBuilder();
 
 
-        if(echoGameService.deleteGameByPlayerID(event.getMember().getId()) && type.equals("private")) {
+        if (echoGameService.deleteGameByPlayerID(event.getMember().getId())) {
             fullMessage.append("Your previous public game has been successfully deleted!\n");
             updatePinnedMessageGameList(event.getGuild());
         }
-
 
 
         if (type.equals("public")) {
@@ -53,7 +48,7 @@ public class CreateGame {
 
                 String boisRole = event.getGuild().getRoleById("645047793500815387").getAsMention();
                 MessageChannel channel = event.getGuild().getTextChannelById("661307549496115232");
-                echoGameService.deleteGameByPlayerID(event.getMember().getId());
+
 
                 fullMessage.append("@BOISTEMP");//TODO::REPLACE ME
                 fullMessage.append(" the available games have been updated.");
@@ -61,6 +56,10 @@ public class CreateGame {
                 channel.sendMessage(fullMessage.toString()).queue();
 
                 registerGameToDB(lobbyID, event.getAuthor().getId(), false);
+
+                for (Message msg : event.getMessage().getChannel().getHistory().getRetrievedHistory())
+                        if(msg.getMember().getUser().getId().equals("661304672832847872"))
+                            msg.delete().queue();
 
                 updatePinnedMessageGameList(event.getGuild());
 
@@ -90,11 +89,13 @@ public class CreateGame {
 
     }
 
-    private  void updatePinnedMessageGameList(Guild guild) {
+    private void updatePinnedMessageGameList(Guild guild) {
 
         Iterable<EchoGame> list = echoGameService.findAll();
         ArrayList<EchoGame> publicGames = new ArrayList<>();
-        for (EchoGame game : list){
+
+
+        for (EchoGame game : list) {
             if (!game.isPrivate() && ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) < 45)
                 publicGames.add(game);
         }
@@ -104,11 +105,11 @@ public class CreateGame {
         builder.setTitle("Current active games");
         builder.setColor(53380);
 
-        for(EchoGame game: publicGames)
-            builder.addField(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game",createLink(game.getLobbyID()),true);
+        for (EchoGame game : publicGames)
+            builder.addField(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game", createLink(game.getLobbyID()), true);
 
 
-       guild.getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
+        guild.getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
 
     }
 
