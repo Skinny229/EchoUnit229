@@ -57,7 +57,7 @@ public class CreateGame {
 
                 registerGameToDB(lobbyID, event.getAuthor().getId(), false);
 
-                for (Message msg : event.getMessage().getChannel().getHistory().getRetrievedHistory())
+                for (Message msg : event.getGuild().getTextChannelById("661307549496115232").getHistory().getRetrievedHistory())
                         if(msg.getMember().getUser().getId().equals("661304672832847872"))
                             msg.delete().queue();
 
