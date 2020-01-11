@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -36,15 +37,10 @@ public class CreateGame {
         StringBuilder fullMessage = new StringBuilder();
 
 
-        if (echoGameService.deleteGameByPlayerID(event.getMember().getId())) {
-            fullMessage.append("Your previous public game has been successfully deleted!\n");
-            updatePinnedMessageGameList(event.getGuild());
-        }
-
-
         if (type.equals("public")) {
             if (isValidID(lobbyID)) {
 
+                registerGameToDB(lobbyID, event.getAuthor().getId(), false);
 
                 String boisRole = event.getGuild().getRoleById("645047793500815387").getAsMention();
                 MessageChannel channel = event.getGuild().getTextChannelById("661307549496115232");
@@ -53,31 +49,27 @@ public class CreateGame {
                 fullMessage.append("@BOISTEMP");//TODO::REPLACE ME
                 fullMessage.append(" the available games have been updated.");
 
-                channel.sendMessage(fullMessage.toString()).queue();
+                String plyMention = event.getAuthor().getAsMention();
 
-                registerGameToDB(lobbyID, event.getAuthor().getId(), false);
-
-                for (Message msg : event.getGuild().getTextChannelById("661307549496115232").getHistory().getRetrievedHistory())
-                        if(msg.getMember().getUser().getId().equals("661304672832847872"))
-                            msg.delete().queue();
+                event.getMessage().delete().queue();
 
                 updatePinnedMessageGameList(event.getGuild());
+
+                channel.sendMessage(fullMessage.toString()).queue();
+
+                event.getMessage().getChannel().sendMessage("Game has successfully been created " + plyMention).queue();
 
             }
         }
 
 
-        String plyMention = event.getAuthor().getAsMention();
 
-        event.getMessage().getChannel().sendMessage("Game has successfully been created " + plyMention).queue();
 
-        event.getMessage().delete().queue();
     }
 
 
     private void registerGameToDB(String lobbyID, String plyID, boolean isPrivate) {
-
-
+        echoGameService.deleteGameByPlayerID(plyID);
         EchoGame game = new EchoGame();
 
         game.setLobbyID(lobbyID);
@@ -91,6 +83,10 @@ public class CreateGame {
 
     private void updatePinnedMessageGameList(Guild guild) {
 
+        for (Message msg : guild.getTextChannelById("661307549496115232").getIterableHistory())
+            if(msg.getMember().getUser().getId().equals("661304672832847872"))
+                msg.delete().queue();
+
         Iterable<EchoGame> list = echoGameService.findAll();
         ArrayList<EchoGame> publicGames = new ArrayList<>();
 
@@ -100,13 +96,18 @@ public class CreateGame {
                 publicGames.add(game);
         }
 
+
+
         EmbedBuilder builder = new EmbedBuilder();
 
-        builder.setTitle("Current active games");
-        builder.setColor(53380);
 
-        for (EchoGame game : publicGames)
-            builder.addField(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game", createLink(game.getLobbyID()), true);
+        builder.setColor(new Color(11,243,8));
+
+        for (EchoGame game : publicGames){
+            builder.setTitle(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game", createLink(game.getLobbyID()));
+            builder.addField( "Time Created since last bot update: ", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
+
+        }
 
 
         guild.getTextChannelById("661307549496115232").sendMessage(builder.build()).queue();
@@ -119,6 +120,15 @@ public class CreateGame {
     }
 
     private static boolean isValidID(String a) {
-        return a.length() == 9;
+
+        char someChar = '-';
+        int count = 0;
+
+        for (int i = 0; i < a.length(); i++) {
+            if (a.charAt(i) == someChar) {
+                count++;
+            }
+        }
+        return a.length()  > 25 && count > 3;
     }
 }
