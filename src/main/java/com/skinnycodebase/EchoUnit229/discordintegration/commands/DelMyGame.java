@@ -17,7 +17,9 @@ public class DelMyGame {
         CreateGame.updatePinnedMessageGameList(event.getGuild(),echoGameService);
         event.getMessage().delete().queue();
         String plyMention = event.getAuthor().getAsMention();
-        event.getMessage().getChannel().sendMessage(plyMention + " your game has been successfully removed from the public listing").queue();
+        event.getAuthor().openPrivateChannel().queue((channel) -> {
+            channel.sendMessage(plyMention + " your game has been successfully removed from the public listing").queue();
+        });
     }
 
 
