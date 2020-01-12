@@ -45,8 +45,8 @@ public class CreateGame {
                 MessageChannel channel = event.getGuild().getTextChannelById("661307549496115232");
 
 
-                fullMessage.append("@BOISTEMP");//TODO::REPLACE ME
-                fullMessage.append(" the available games have been updated.");
+                fullMessage.append(boisRole);
+                fullMessage.append(" the available public games have been updated.");
 
                 String plyMention = event.getAuthor().getAsMention();
 
