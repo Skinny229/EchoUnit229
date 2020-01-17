@@ -13,7 +13,7 @@ public class DelMyGame {
 
 
     public void run(MessageReceivedEvent event){
-        echoGameService.deleteGameByPlayerID(event.getMember().getUser().getId());
+        echoGameService.deletePublicGameByPlayerID(event.getMember().getUser().getId());
         CreateGame.updatePinnedMessageGameList(event.getGuild(),echoGameService);
         event.getMessage().delete().queue();
         String plyMention = event.getAuthor().getAsMention();

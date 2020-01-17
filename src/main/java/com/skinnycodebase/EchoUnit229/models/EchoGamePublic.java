@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-public class EchoGame {
+public class EchoGamePublic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

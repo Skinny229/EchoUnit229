@@ -1,36 +1,58 @@
 package com.skinnycodebase.EchoUnit229.service;
 
-import com.skinnycodebase.EchoUnit229.models.EchoGame;
-import com.skinnycodebase.EchoUnit229.models.EchoGameRepository;
+import com.skinnycodebase.EchoUnit229.models.EchoGamePrivate;
+import com.skinnycodebase.EchoUnit229.models.EchoGamePrivateRepository;
+import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
+import com.skinnycodebase.EchoUnit229.models.EchoGamePublicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
 public class EchoGameService {
 
 
-    private EchoGameRepository echoGameRepository;
+    private EchoGamePublicRepository echoGamePublicRepository;
+
+    private EchoGamePrivateRepository echoGamePrivateRepository;
 
     @Autowired
-    public void setEchoGameRepository(EchoGameRepository echoGameRepository) {
-        this.echoGameRepository = echoGameRepository;
+    public void setEchoGamePrivateRepository(EchoGamePrivateRepository echoGamePrivateRepository) {
+        this.echoGamePrivateRepository = echoGamePrivateRepository;
     }
 
-    public Iterable<EchoGame> findAll() {
-        return echoGameRepository.findAll();
+    @Autowired
+    public void setEchoGamePublicRepository(EchoGamePublicRepository echoGamePublicRepository) {
+        this.echoGamePublicRepository = echoGamePublicRepository;
     }
 
-    public EchoGame save(EchoGame game) {
-        return echoGameRepository.save(game);
+    public Iterable<EchoGamePublic> findAllPublic() {
+        return echoGamePublicRepository.findAll();
     }
 
-    public boolean deleteGameByPlayerID(String playerID) {
-        for (EchoGame game : findAll())
-            if (game.getPlayerID().equals(playerID)){
-            echoGameRepository.deleteById(game.getId());
-            return true;
-        }
+    public EchoGamePublic savePublic(EchoGamePublic game) {
+        return echoGamePublicRepository.save(game);
+    }
+
+    public boolean deletePublicGameByPlayerID(String playerId) {
+        for (EchoGamePublic game : findAllPublic())
+            if (game.getPlayerID().equals(playerId)) {
+                echoGamePublicRepository.deleteById(game.getId());
+                return true;
+            }
         return false;
     }
+
+    public ArrayList<EchoGamePrivate> getJoinablePrivateGames(String playerID) {
+        ArrayList<EchoGamePrivate> result = new ArrayList<>();
+        for (EchoGamePrivate game : echoGamePrivateRepository.findAll())
+            if (game.getUserId() == playerID)
+                result.add(game);
+        return result;
+    }
+
+
 }

@@ -42,7 +42,6 @@ public class EchoUnit229Application {
             logger.error(e.toString());
         }
 
-
         jda.addEventListener(new RedeployHandler());
         jda.addEventListener(new BoisMessageIntake(createGame, delMyGame));
 
