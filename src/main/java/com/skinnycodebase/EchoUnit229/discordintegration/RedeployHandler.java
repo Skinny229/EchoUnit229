@@ -1,7 +1,6 @@
 package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
-import com.sun.deploy.resources.Deployment;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
