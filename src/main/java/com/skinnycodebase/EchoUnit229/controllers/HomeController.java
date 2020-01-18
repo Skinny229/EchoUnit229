@@ -5,6 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * Basic Home Controller to just shoo off people
+ */
 @Controller
 public class HomeController {
 

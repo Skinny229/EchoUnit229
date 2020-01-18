@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 @Service
@@ -33,8 +32,8 @@ public class EchoGameService {
         return echoGamePublicRepository.findAll();
     }
 
-    public EchoGamePublic savePublic(EchoGamePublic game) {
-        return echoGamePublicRepository.save(game);
+    public void savePublic(EchoGamePublic game) {
+         echoGamePublicRepository.save(game);
     }
 
     public boolean deletePublicGameByPlayerID(String playerId) {

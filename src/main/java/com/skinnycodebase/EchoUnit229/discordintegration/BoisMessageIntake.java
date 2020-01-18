@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
+
 
 @Component
 public class BoisMessageIntake extends ListenerAdapter {
@@ -26,40 +28,41 @@ public class BoisMessageIntake extends ListenerAdapter {
     }
 
 
+    /*
+    *
+    *  Example input: '-[command] [arg1] [arg2]......'
+    * */
     @Override
-    public void onMessageReceived(MessageReceivedEvent event){
+    public void onMessageReceived(@Nonnull MessageReceivedEvent event){
 
         String rawMsg = event.getMessage().getContentRaw();
 
         if(rawMsg.startsWith("-")){
 
-            logger.info("Possible command attempt by ["+ event.getMember().getUser().getName() +"] with: " + rawMsg);
+            logger.info("Possible command attempt by [{}] with: {}" + rawMsg, event.getMember().getUser().getName(), rawMsg);
 
             String command;
+
+            //Parse command being attempted
             if(rawMsg.indexOf(' ') == -1)
                 command = rawMsg.substring(1);
             else
                 command = rawMsg.substring(1,rawMsg.indexOf(' '));
 
-            switch(command.toUpperCase()){
+            logger.info("Command Parsed into: " + command);
 
+            switch(command.toUpperCase()){
                 case "CREATEGAME":
                     createGame.run(event);
-                    break;
-                case "FLUSH":
-                    break;
-                case "INSTALLHELP":
-                    break;
-                case "LISTGAMES":
                     break;
                 case "DELMYGAME":
                     delMyGame.run(event);
                     break;
                 default:
+                    logger.info("No command found for [{}]", rawMsg);
             }
+            logger.info("Command Execution complete");
         }
-
-
    }
 
 

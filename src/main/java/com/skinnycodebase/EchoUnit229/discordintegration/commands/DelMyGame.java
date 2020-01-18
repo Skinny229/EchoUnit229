@@ -13,14 +13,20 @@ public class DelMyGame {
 
 
     public void run(MessageReceivedEvent event){
+
+        //Look for the game within the public echo game table and delete if it exists
         echoGameService.deletePublicGameByPlayerID(event.getMember().getUser().getId());
-        CreateGame.updatePinnedMessageGameList(event.getGuild(),echoGameService);
+
+        //Update the lfgbot channel public games
+        CreateGame.updatePublicMessageGameList(event.getGuild(),echoGameService);
+
+        //Delete original command message
         event.getMessage().delete().queue();
+
+        //Notify the player through private message
         String plyMention = event.getAuthor().getAsMention();
         event.getAuthor().openPrivateChannel().queue((channel) -> {
             channel.sendMessage(plyMention + " your game has been successfully removed from the public listing").queue();
         });
     }
-
-
 }

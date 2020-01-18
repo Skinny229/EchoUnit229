@@ -1,13 +1,14 @@
 package com.skinnycodebase.EchoUnit229;
 
+
+//
 public class DeploymentSettings {
 
+    public static String BOT_AUTH_TOKEN;
 
-    public static final String BOT_AUTH_TOKEN = System.getenv("DISCORD_UNIT229_TOKEN");
+    public static  String BOIS_ROLE_ID;
 
-    public static final String BOIS_ROLE_ID = System.getenv("BOIS_ROLE_ID");
-
-    public static final String LFGBOT_CHANNEL_ID = System.getenv("LFGBOT_ID");
+    public static String LFGBOT_CHANNEL_ID;
 
     public static final String BOT_ID = System.getenv("BOT_ID");
 

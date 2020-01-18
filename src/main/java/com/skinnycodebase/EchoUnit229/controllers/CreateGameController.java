@@ -10,13 +10,17 @@ import org.springframework.http.MediaType;
 public class CreateGameController {
 
 
+    /*
+    * Current in production method of generating the join game links
+    * for some reason thymeleaf is throwing 'OutOfContext' Exception in v2 of this implementation
+    *
+    * See ... GameJoinerController.java and joinGame.html under templates for current non working method
+    * */
     @GetMapping(value = "/genGame", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public String generateGameFromLink(@RequestParam("lobbyID") String input) {
 
         StringBuilder builder = new StringBuilder();
-
-        //slightly lazy to learn js for now
         builder.append("<!DOCTYPE HTML>\n" +
                 "<html xmlns:th=\"http://www.thymeleaf.org\" lang=\"en\">\n" +
                 "<head>\n" +

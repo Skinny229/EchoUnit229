@@ -35,7 +35,7 @@ public class CreateGame {
     public void run(MessageReceivedEvent event) {
 
 
-        ArrayList<String> cmdbreakdown = new ArrayList(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
+        ArrayList<String> cmdbreakdown = new ArrayList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 
         String type = cmdbreakdown.get(1);
 
@@ -43,9 +43,14 @@ public class CreateGame {
 
         StringBuilder fullMessage = new StringBuilder();
 
+        if(!isValidID(lobbyID)){
+            logger.warn("Invalid ID. Cancelling....");
+            privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again");
+            return;
+        }
 
-        if (type.equals("public")) {
-            if (isValidID(lobbyID)) {
+
+        if (type.equals("public") ) {
 
                 registerPublicGame(lobbyID, event.getAuthor().getId());
 
@@ -59,15 +64,20 @@ public class CreateGame {
 
                 String plyMention = event.getAuthor().getAsMention();
 
+
+                //Delete initial command message
                 event.getMessage().delete().queue();
 
-                updatePinnedMessageGameList(event.getGuild(), echoGameService);
+                //Display all new and current running games to the lfg-bot channel
+                updatePublicMessageGameList(event.getGuild(), echoGameService);
 
+                //Call on all @Bois from the lfg-bot channel
                 channel.sendMessage(fullMessage.toString()).queue();
 
+                //Notify player that the game has been created
                 event.getMessage().getChannel().sendMessage("Game has successfully been created " + plyMention).queue();
 
-            }
+
         } else if (type.equals("private")) {
 
             //Add mentioned players to the invite list
@@ -78,28 +88,32 @@ public class CreateGame {
                 toBeInvited.add(member.getUser());
 
 
+            //Double check the bimbo actually invited someone
             if(toBeInvited.isEmpty()){
+
+                logger.warn("No players have been invited to the private private");
+
                 privateMessage(event.getAuthor(), "You didn't invite anyone! Canceling....");
+
                 event.getMessage().delete().queue();
+
                 return;
             }
 
             //Private Message all new players they have been invited to a new game
             for(User user : toBeInvited) {
-                //If the user is the same as the creator send seperate msg
-                if(user.getId().equals(event.getAuthor().getId()))
-                {
-                    privateMessage(user, "Game registered and invites sent");
+
+                //If the user is the same as the creator send separate msg
+                if(user.getId().equals(event.getAuthor().getId())) {
+                    privateMessage(user, "Game registered and invites are being sent...");
                     continue;
                 }
 
-                logger.info("Inviting: " + user.getName() + " -- FROM: " + event.getAuthor().getName());
+                logger.info("Inviting user [{}] to {} 's Game" , user.getName() , event.getAuthor().getName());
                 privateMessageOnPrivateInvite(user, lobbyID);
             }
 
-            //RegisterCreatedGame
-            //LogInvitees
-
+            //TODO: implement echo game service to handle private games so we can add players
 
         }
 
@@ -107,19 +121,24 @@ public class CreateGame {
     }
 
 
-    private void privateMessageOnPrivateInvite(User user, String lobbyId){
 
-        String msg = "This is a test please ignore for now. You will most likely see this multiple times. You are currently my test monkey\n"+
-                createLink(lobbyId);
-        privateMessage(user, msg);
-
-    }
 
     private void privateMessage(User user, String message) {
         user.openPrivateChannel().queue((channel) ->
         {
             channel.sendMessage(message).queue();
         });
+    }
+
+    /*
+    * Notify user that they have been invited to a private game
+    * */
+    private void privateMessageOnPrivateInvite(User user, String lobbyId){
+
+        String msg = "This is a test please ignore for now. You will most likely see this multiple times. You are currently my test monkey\n"+
+                createLink(lobbyId);
+        privateMessage(user, msg);
+
     }
 
 
@@ -135,34 +154,47 @@ public class CreateGame {
 
     }
 
-    public static void updatePinnedMessageGameList(Guild guild, EchoGameService service) {
+    public static void updatePublicMessageGameList(Guild guild, EchoGameService service) {
 
+        //Delete all messages from the bot under the lfgbot channel
         for (Message msg : guild.getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID).getIterableHistory())
             if (msg.getMember().getUser().getId().equals(DeploymentSettings.BOT_ID))
                 msg.delete().queue();
 
+        //Query for all public games within the DB
         Iterable<EchoGamePublic> list = service.findAllPublic();
+
         ArrayList<EchoGamePublic> publicGames = new ArrayList<>();
 
-
+        //Out of those add only those who have been created within the last 45 mins
         for (EchoGamePublic game : list) {
             if (!game.isPrivate() && ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) < 45)
                 publicGames.add(game);
         }
 
-
+        //Create a Embed message for every joinable public game and post it in the LFGBOT channel
         for (EchoGamePublic game : publicGames) {
+
             EmbedBuilder builder = new EmbedBuilder();
+
             builder.setColor(new Color(11, 243, 8));
+
+            //Generate link to join the game
+            //TODO: Test if this can just link the 'echoprotocol' schema
             builder.setTitle(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game", createLink(game.getLobbyID()));
+
+            //Post time since it was created
             builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
+
             guild.getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID).sendMessage(builder.build()).queue();
         }
 
 
     }
 
-
+    /*
+    * Return current link to be used for the echoprotocol schema
+    * */
     private static String createLink(String ID) {
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/genGame?lobbyID=" + ID;
     }
@@ -179,4 +211,5 @@ public class CreateGame {
         }
         return a.length() > 25 && count > 3;
     }
+
 }
