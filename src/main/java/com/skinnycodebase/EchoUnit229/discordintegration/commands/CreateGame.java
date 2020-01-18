@@ -37,15 +37,21 @@ public class CreateGame {
 
         ArrayList<String> cmdbreakdown = new ArrayList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 
-        String type = cmdbreakdown.get(1);
+        if(cmdbreakdown.size() < 3){
+            logger.warn("No game type detected!");
+            privateMessage(event.getAuthor(), "Did you input game type by any chance?");
+        }
 
-        String lobbyID = cmdbreakdown.get(2);
+        String type = cmdbreakdown.get(2);
+
+        String lobbyID = cmdbreakdown.get(1);
 
         StringBuilder fullMessage = new StringBuilder();
 
         if(!isValidID(lobbyID)){
             logger.warn("Invalid ID. Cancelling....");
-            privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again");
+            privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again.\n"+
+                    "Is it possible you are still using V0.1 of the Game inviter?");
             return;
         }
 
@@ -113,7 +119,7 @@ public class CreateGame {
                 privateMessageOnPrivateInvite(user, lobbyID);
             }
 
-            //TODO: implement echo game service to handle private games so we can add players
+            //TODO: implement echo game service to handle private games so we can add players and resend invites and delete em
 
         }
 
