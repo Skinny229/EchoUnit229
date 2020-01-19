@@ -39,7 +39,8 @@ public class CreateGame {
 
         if(cmdbreakdown.size() < 3){
             logger.warn("No game type detected!");
-            privateMessage(event.getAuthor(), "Did you input game type by any chance?");
+            privateMessage(event.getAuthor(), "Game Creation FAILED. Did you forget to input game type by any chance?");
+            return;
         }
 
         String type = cmdbreakdown.get(2);
@@ -52,6 +53,7 @@ public class CreateGame {
             logger.warn("Invalid ID. Cancelling....");
             privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again.\n"+
                     "Is it possible you are still using V0.1 of the Game inviter?");
+            event.getMessage().delete().queue();
             return;
         }
 
@@ -111,7 +113,7 @@ public class CreateGame {
 
                 //If the user is the same as the creator send separate msg
                 if(user.getId().equals(event.getAuthor().getId())) {
-                    privateMessage(user, "Game registered and invites are being sent...");
+                    privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...");
                     continue;
                 }
 
@@ -122,7 +124,7 @@ public class CreateGame {
             //TODO: implement echo game service to handle private games so we can add players and resend invites and delete em
 
         }
-
+        event.getMessage().delete().queue();
 
     }
 
