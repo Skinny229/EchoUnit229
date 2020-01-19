@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 @Component
 public class CreateGame {
@@ -37,7 +38,7 @@ public class CreateGame {
 
         ArrayList<String> cmdbreakdown = new ArrayList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 
-        if(cmdbreakdown.size() < 3){
+        if (cmdbreakdown.size() < 3) {
             logger.warn("No game type detected!");
             privateMessage(event.getAuthor(), "Game Creation FAILED. Did you forget to input game type by any chance?");
             return;
@@ -49,41 +50,41 @@ public class CreateGame {
 
         StringBuilder fullMessage = new StringBuilder();
 
-        if(!isValidID(lobbyID)){
+        if (!isValidID(lobbyID)) {
             logger.warn("Invalid ID. Cancelling....");
-            privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again.\n"+
+            privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again.\n" +
                     "Is it possible you are still using V0.1 of the Game inviter?");
             event.getMessage().delete().queue();
             return;
         }
 
 
-        if (type.equals("public") ) {
+        if (type.equals("public")) {
 
-                registerPublicGame(lobbyID, event.getAuthor().getId());
+            registerPublicGame(lobbyID, event.getAuthor().getId());
 
-                String boisRole = event.getGuild().getRoleById(DeploymentSettings.BOIS_ROLE_ID).getAsMention();
+            String boisRole = event.getGuild().getRoleById(DeploymentSettings.BOIS_ROLE_ID).getAsMention();
 
-                MessageChannel channel = event.getGuild().getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID);
-
-
-                fullMessage.append(boisRole);
-                fullMessage.append(" the available public games have been updated.");
-
-                String plyMention = event.getAuthor().getAsMention();
+            MessageChannel channel = event.getGuild().getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID);
 
 
-                //Delete initial command message
-                event.getMessage().delete().queue();
+            fullMessage.append(boisRole);
+            fullMessage.append(" the available public games have been updated.");
 
-                //Display all new and current running games to the lfg-bot channel
-                updatePublicMessageGameList(event.getGuild(), echoGameService);
+            String plyMention = event.getAuthor().getAsMention();
 
-                //Call on all @Bois from the lfg-bot channel
-                channel.sendMessage(fullMessage.toString()).queue();
 
-                //Notify player that the game has been created
-                event.getMessage().getChannel().sendMessage("Game has successfully been created " + plyMention).queue();
+            //Delete initial command message
+            event.getMessage().delete().queue();
+
+            //Display all new and current running games to the lfg-bot channel
+            updatePublicMessageGameList(event.getGuild(), echoGameService);
+
+            //Call on all @Bois from the lfg-bot channel
+            channel.sendMessage(fullMessage.toString()).queue();
+
+            //Notify player that the game has been created
+            event.getMessage().getChannel().sendMessage("Game has successfully been created " + plyMention).queue();
 
 
         } else if (type.equals("private")) {
@@ -92,12 +93,14 @@ public class CreateGame {
             HashSet<User> toBeInvited = new HashSet<>(event.getMessage().getMentionedUsers());
 
             //Add mentioned roles
-            for (Member member : event.getGuild().getMembersWithRoles(event.getMessage().getMentionedRoles()))
-                toBeInvited.add(member.getUser());
+            List<Role> rolesToInvite = event.getMessage().getMentionedRoles();
+            if (rolesToInvite.size() != 0)
+                for (Member member : event.getGuild().getMembersWithRoles(rolesToInvite))
+                    toBeInvited.add(member.getUser());
 
 
             //Double check the bimbo actually invited someone
-            if(toBeInvited.isEmpty()){
+            if (toBeInvited.isEmpty()) {
 
                 logger.warn("No players have been invited to the private private");
 
@@ -108,17 +111,21 @@ public class CreateGame {
                 return;
             }
 
-            //Private Message all new players they have been invited to a new game
-            for(User user : toBeInvited) {
+            if(toBeInvited.size() > 14){
+                privateMessage(event.getAuthor(), "wowowow too many players.. Canceling...");
+                return;
+            }
 
+            //Private Message all new players they have been invited to a new game
+            for (User user : toBeInvited) {
                 //If the user is the same as the creator send separate msg
-                if(user.getId().equals(event.getAuthor().getId())) {
+                if (user.getId().equals(event.getAuthor().getId())) {
                     privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...");
                     continue;
                 }
 
-                logger.info("Inviting user [{}] to {} 's Game" , user.getName() , event.getAuthor().getName());
-                privateMessageOnPrivateInvite(user, lobbyID);
+                logger.info("Inviting user [{}] to {} 's Game", user.getName(), event.getAuthor().getName());
+                // privateMessageOnPrivateInvite(user, lobbyID);
             }
 
             //TODO: implement echo game service to handle private games so we can add players and resend invites and delete em
@@ -129,8 +136,6 @@ public class CreateGame {
     }
 
 
-
-
     private void privateMessage(User user, String message) {
         user.openPrivateChannel().queue((channel) ->
         {
@@ -139,11 +144,11 @@ public class CreateGame {
     }
 
     /*
-    * Notify user that they have been invited to a private game
-    * */
-    private void privateMessageOnPrivateInvite(User user, String lobbyId){
+     * Notify user that they have been invited to a private game
+     * */
+    private void privateMessageOnPrivateInvite(User user, String lobbyId) {
 
-        String msg = "This is a test please ignore for now. You will most likely see this multiple times. You are currently my test monkey\n"+
+        String msg = "You have been invited to a Scrim/Private game! Please click on the following link to join\n" +
                 createLink(lobbyId);
         privateMessage(user, msg);
 
@@ -201,8 +206,8 @@ public class CreateGame {
     }
 
     /*
-    * Return current link to be used for the echoprotocol schema
-    * */
+     * Return current link to be used for the echoprotocol schema
+     * */
     private static String createLink(String ID) {
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/genGame?lobbyID=" + ID;
     }

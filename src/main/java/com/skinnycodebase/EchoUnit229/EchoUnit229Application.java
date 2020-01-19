@@ -15,6 +15,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
+
+import java.net.InetAddress;
 
 @SpringBootApplication
 public class EchoUnit229Application {
@@ -40,6 +43,8 @@ public class EchoUnit229Application {
         this.delMyGame = delMyGame;
     }
 
+    @Autowired
+    Environment environment;
 
     /*
     * Annotation makes sure spring is has started before running this method
@@ -47,6 +52,7 @@ public class EchoUnit229Application {
     @EventListener(ApplicationReadyEvent.class)
     public void botStartup() {
 
+        logger.info("Starting with address[{}] and hostname[{}]", InetAddress.getLoopbackAddress().getHostAddress(), InetAddress.getLoopbackAddress().getHostName());
         //Boot JDA (Discord bot)
         JDA jda = null;
         try {
