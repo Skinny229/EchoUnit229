@@ -120,12 +120,12 @@ public class CreateGame {
             for (User user : toBeInvited) {
                 //If the user is the same as the creator send separate msg
                 if (user.getId().equals(event.getAuthor().getId())) {
-                    privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...");
+                    privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...\n"+createLink(lobbyID));
                     continue;
                 }
 
                 logger.info("Inviting user [{}] to {} 's Game", user.getName(), event.getAuthor().getName());
-                // privateMessageOnPrivateInvite(user, lobbyID);
+                privateMessageOnPrivateInvite(user, lobbyID);
             }
 
             //TODO: implement echo game service to handle private games so we can add players and resend invites and delete em
@@ -209,6 +209,7 @@ public class CreateGame {
      * Return current link to be used for the echoprotocol schema
      * */
     private static String createLink(String ID) {
+
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/genGame?lobbyID=" + ID;
     }
 
