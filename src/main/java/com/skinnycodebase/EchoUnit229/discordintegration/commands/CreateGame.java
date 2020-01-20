@@ -44,7 +44,7 @@ public class CreateGame {
             return;
         }
 
-        String type = cmdbreakdown.get(2);
+        String type = cmdbreakdown.get(2).toLowerCase();
 
         String lobbyID = cmdbreakdown.get(1);
 
@@ -130,6 +130,8 @@ public class CreateGame {
 
 
 
+        }else{
+            privateMessage(event.getAuthor(), "I didn't understand game type please try again.");
         }
         event.getMessage().delete().queue();
 
