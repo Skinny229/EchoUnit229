@@ -14,9 +14,6 @@ public class EchoGamePublic {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    //Is it a private posting?
-    private boolean isPrivate;
-
     //Discord player ID from the game generated
     private String playerID;
 
@@ -25,20 +22,17 @@ public class EchoGamePublic {
 
     private LocalDateTime timeGameCreated;
 
+    private int currentPlayers;
+
+    private int desiredPlayers;
+
+
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public boolean isPrivate() {
-        return isPrivate;
-    }
-
-    public void setPrivate(boolean aPrivate) {
-        isPrivate = aPrivate;
     }
 
     public String getPlayerID() {
@@ -63,5 +57,13 @@ public class EchoGamePublic {
 
     public void setTimeGameCreated(LocalDateTime timeGameCreated) {
         this.timeGameCreated = timeGameCreated;
+    }
+
+    public int getCurrentPlayers() {
+        return currentPlayers;
+    }
+
+    public void setCurrentPlayers(int currentPlayers) {
+        this.currentPlayers = currentPlayers;
     }
 }

@@ -128,7 +128,7 @@ public class CreateGame {
                 privateMessageOnPrivateInvite(user, lobbyID);
             }
 
-            //TODO: implement echo game service to handle private games so we can add players and resend invites and delete em
+
 
         }
         event.getMessage().delete().queue();
@@ -181,7 +181,7 @@ public class CreateGame {
 
         //Out of those add only those who have been created within the last 45 mins
         for (EchoGamePublic game : list) {
-            if (!game.isPrivate() && ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) < 45)
+            if (ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) < 45)
                 publicGames.add(game);
         }
 
@@ -193,7 +193,6 @@ public class CreateGame {
             builder.setColor(new Color(11, 243, 8));
 
             //Generate link to join the game
-            //TODO: Test if this can just link the 'echoprotocol' schema
             builder.setTitle(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game", createLink(game.getLobbyID()));
 
             //Post time since it was created
