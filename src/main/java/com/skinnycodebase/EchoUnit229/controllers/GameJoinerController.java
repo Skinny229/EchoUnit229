@@ -26,9 +26,4 @@ public class GameJoinerController {
 
 
 
-    @GetMapping("/genGame")
-    @ResponseStatus(HttpStatus.OK)
-    public String createGameFrom(@RequestParam int id){
-        return "asdasdasdA";
-    }
 }
