@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['GameInviter.py'],
-             pathex=['C:\\dev\\EchoUnit229\\GameInviteScript'],
+             pathex=['C:\\Dev\\EchoUnit229\\GameInviteScript'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -30,4 +30,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False )
+          console=True )

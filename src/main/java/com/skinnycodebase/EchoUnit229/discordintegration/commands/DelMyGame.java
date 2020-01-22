@@ -24,8 +24,6 @@ public class DelMyGame {
         //Update the lfgbot channel public games
         CreateGame.updatePublicMessageGameList(event.getGuild(),echoGameService);
 
-        //Delete original command message
-        event.getMessage().delete().queue();
 
         //Notify the player through private message
         String plyMention = event.getAuthor().getAsMention();

@@ -35,33 +35,39 @@ public class BoisMessageIntake extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event){
 
-        String rawMsg = event.getMessage().getContentRaw();
 
+        String rawMsg = event.getMessage().getContentRaw();
         if(rawMsg.startsWith("-")){
 
-            logger.info("Possible command attempt by [{}] with: {}" + rawMsg, event.getMember().getUser().getName(), rawMsg);
+            logger.info("Possible command attempt by [{}] with [{}]" , event.getAuthor().getName(), event.getMessage().getContentDisplay());
+            logger.debug("Raw command [{}]", rawMsg);
 
             String command;
-
             //Parse command being attempted
             if(rawMsg.indexOf(' ') == -1)
                 command = rawMsg.substring(1);
             else
                 command = rawMsg.substring(1,rawMsg.indexOf(' '));
 
-            logger.info("Command Parsed into: " + command);
+            command = command.toUpperCase();
+            logger.info("Command Parsed into [{}]" + command);
 
-            switch(command.toUpperCase()){
+
+
+            switch(command){
                 case "CREATEGAME":
                     createGame.run(event);
+                    event.getMessage().delete().queue();
                     break;
                 case "DELMYGAME":
                     delMyGame.run(event);
+                    event.getMessage().delete().queue();
                     break;
                 default:
-                    logger.info("No command found for [{}]", rawMsg);
+                    logger.info("No command found for [{}]", command);
             }
-            logger.info("Command Execution complete");
+
+            logger.info("Command Execution by [{}] complete", event.getAuthor().getName());
         }
    }
 

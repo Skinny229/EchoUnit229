@@ -48,13 +48,16 @@ public class CreateGame {
 
         String lobbyID = cmdbreakdown.get(1);
 
+        logger.info("Expected game type [{}]", type);
+        logger.info("Expected sessionID[{}]", lobbyID);
+
         StringBuilder fullMessage = new StringBuilder();
 
         if (!isValidID(lobbyID)) {
             logger.warn("Invalid ID. Cancelling....");
             privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again.\n" +
                     "Is it possible you are still using V0.1 of the Game inviter?");
-            event.getMessage().delete().queue();
+
             return;
         }
 
@@ -73,9 +76,6 @@ public class CreateGame {
 
             String plyMention = event.getAuthor().getAsMention();
 
-
-            //Delete initial command message
-            event.getMessage().delete().queue();
 
             //Display all new and current running games to the lfg-bot channel
             updatePublicMessageGameList(event.getGuild(), echoGameService);
@@ -101,13 +101,8 @@ public class CreateGame {
 
             //Double check the bimbo actually invited someone
             if (toBeInvited.isEmpty()) {
-
-                logger.warn("No players have been invited to the private private");
-
+                logger.warn("No players have been invited to the private. Canceling Creation");
                 privateMessage(event.getAuthor(), "You didn't invite anyone! Canceling....");
-
-                event.getMessage().delete().queue();
-
                 return;
             }
 
@@ -133,7 +128,6 @@ public class CreateGame {
         }else{
             privateMessage(event.getAuthor(), "I didn't understand game type please try again.");
         }
-        event.getMessage().delete().queue();
 
     }
 
