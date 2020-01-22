@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 public class DeploymentSettings {
 
 
-
-
     public static final String BOT_AUTH_TOKEN = System.getenv("AUTH_TOKEN");
 
     public static final String BOIS_ROLE_ID = "645047793500815387";

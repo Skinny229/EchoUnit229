@@ -50,7 +50,7 @@ public class BoisMessageIntake extends ListenerAdapter {
                 command = rawMsg.substring(1,rawMsg.indexOf(' '));
 
             command = command.toUpperCase();
-            logger.info("Command Parsed into [{}]" + command);
+            logger.info("Command Parsed into [{}]" , command);
 
 
 
@@ -64,7 +64,7 @@ public class BoisMessageIntake extends ListenerAdapter {
                     event.getMessage().delete().queue();
                     break;
                 default:
-                    logger.info("No command found for [{}]", command);
+                    logger.info("No command found for [ {} ]", command);
             }
 
             logger.info("Command Execution by [{}] complete", event.getAuthor().getName());
