@@ -1,4 +1,4 @@
-import os, string, sys, subprocess, psutil
+import os, string, sys, subprocess, psutil, time
 
 
 processName = "echovr"
@@ -41,14 +41,31 @@ def sendGameUpdate():
 
 
 def launchGame(lobbyid):
+    restartEchoIfRunning()
+    time.sleep(2)
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid])
     return
 
 def launchGameSpectator(lobbyid):
+    restartEchoIfRunning()
+    time.sleep(2)
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid, "-spectatorstream"])
     return
 
 def startEchoProtocol():
+
+
+    echoArgs = sys.argv[1].split(':')
+
+    action = echoArgs[1]
+
+    switcher = {
+        "launch":launchGame(echoArgs[2]),
+        "spec":launchGameSpectator(echoArgs[2])
+
+    }
+
+    switcher.get(action, "oops")
     return
 
 
