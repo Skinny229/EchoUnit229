@@ -112,7 +112,7 @@ public class CreateGameController {
                 "            </div>\n" +
                 "            <div class=\"flex-item\" id=\"buttons\">\n" +
                 "                <form>\n" +
-                "                    <a id=\"input\" href=\"echoprotocol:");
+                "                    <a id=\"input\" href=\"echoprotocol:launch:");
         builder.append(input);
         builder.append("\" >Click Me</a></form></div></div></div></body></html>");
 

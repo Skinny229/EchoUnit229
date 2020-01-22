@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['echoprotocol.py'],
-             pathex=['C:\\dev\\EchoUnit229\\ProtocolScript'],
+             pathex=['C:\\Dev\\EchoUnit229\\ProtocolScript'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -30,4 +30,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False )
+          console=True )
