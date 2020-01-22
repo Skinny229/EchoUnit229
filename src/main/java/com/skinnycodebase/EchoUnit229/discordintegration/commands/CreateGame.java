@@ -165,6 +165,9 @@ public class CreateGame {
 
     public static void updatePublicMessageGameList(Guild guild, EchoGameService service) {
 
+        if(guild.getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID) == null)
+            return;
+
         //Delete all messages from the bot under the lfgbot channel
         for (Message msg : guild.getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID).getIterableHistory())
             if (msg.getMember().getUser().getId().equals(DeploymentSettings.BOT_ID))
