@@ -21,7 +21,7 @@ public class GameJoinerController {
     @GetMapping("/genGame")
     @ResponseStatus(HttpStatus.OK)
     public String createGame(@RequestParam String lobbyID) {
-        return "joinGame.html";
+        return "joinGameOld.html";
     }
 
 
