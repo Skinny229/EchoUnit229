@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 
 @RequestMapping("/api/v1")
 @RestController
-public class CreateGameController {
+public class V1Controller {
 
 
     /*

@@ -4,7 +4,7 @@
     <title>EchoVR Protocol</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link th:href="@{/css/home.css}" rel="stylesheet"/>
+    <link th:href="@{/css/joinGame.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="flex-container">
@@ -13,11 +13,14 @@
             <div class="header">
                 <h1>Game Generated</h1>
                 <h2>Please verify echoprotocol is installed in your pc</h2>
-                <div >
+                <div>
 
-                    <a class="button1" href="echoprotocol:launch:123123" >Click me to join as player</a>
-                    <a class="button1" href="echoprotocol:spectate:123123">Click me to launch as spectatorstream</a>
-
+                    <a class="button1" th:href="${'echoprotocol:launch:' + #request.getAttribute('lobbyId')}">
+                       Join as player
+                    </a>
+                    <a class="button1" th:href="${'echoprotocol:spec:' + #request.getAttribute('lobbyId')}">
+                    Join as Spectator
+                    </a>
 
                 </div>
             </div>

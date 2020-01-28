@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/api/v2")
@@ -18,10 +19,12 @@ public class GameJoinerController {
     @Autowired
     EchoGameService echoGameService;
 
-    @GetMapping("/genGame")
+    @GetMapping("/joinGame")
     @ResponseStatus(HttpStatus.OK)
-    public String createGame(@RequestParam String lobbyID) {
-        return "joinGameOld.html";
+    public ModelAndView createGame(@RequestParam String lobbyId) {
+        ModelAndView  returned = new ModelAndView("joinGame.html");
+        returned.addObject("lobbyId", lobbyId);
+        return returned;
     }
 
 
