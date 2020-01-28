@@ -17,6 +17,9 @@ public class EchoGamePublic {
     //Discord player ID from the game generated
     private String playerID;
 
+    //Guild id generated from
+    private String guildId;
+
     //EchoVR lobbyID
     private String lobbyID;
 
@@ -67,5 +70,19 @@ public class EchoGamePublic {
         this.currentPlayers = currentPlayers;
     }
 
+    public String getGuildId() {
+        return guildId;
+    }
 
+    public void setGuildId(String guildId) {
+        this.guildId = guildId;
+    }
+
+    public int getDesiredPlayers() {
+        return desiredPlayers;
+    }
+
+    public void setDesiredPlayers(int desiredPlayers) {
+        this.desiredPlayers = desiredPlayers;
+    }
 }

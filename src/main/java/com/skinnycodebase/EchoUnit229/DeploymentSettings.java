@@ -21,6 +21,6 @@ public class DeploymentSettings {
 
     public static final String DEV_ID = "142673915964030976";
 
-    public static final String API_CONTROLLER_VERSION = "v1";
+    public static final String API_CONTROLLER_VERSION = "v2";
 
 }

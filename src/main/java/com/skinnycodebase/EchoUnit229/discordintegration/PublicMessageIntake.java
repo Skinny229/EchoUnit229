@@ -13,19 +13,10 @@ import javax.annotation.Nonnull;
 
 
 @Component
-public class BoisMessageIntake extends ListenerAdapter {
+public class PublicMessageIntake extends ListenerAdapter {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(BoisMessageIntake.class);
-
-
-   private CreateGame createGame;
-   private DelMyGame delMyGame;
-    @Autowired
-    public BoisMessageIntake(CreateGame createGame, DelMyGame delMyGame){
-        this.createGame = createGame;
-        this.delMyGame = delMyGame;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(PublicMessageIntake.class);
 
 
     /*
@@ -56,11 +47,11 @@ public class BoisMessageIntake extends ListenerAdapter {
 
             switch(command){
                 case "CREATEGAME":
-                    createGame.run(event);
+                    CreateGame.run(event);
                     event.getMessage().delete().queue();
                     break;
                 case "DELMYGAME":
-                    delMyGame.run(event);
+                    DelMyGame.run(event);
                     event.getMessage().delete().queue();
                     break;
                 default:

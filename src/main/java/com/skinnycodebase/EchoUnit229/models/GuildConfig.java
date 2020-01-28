@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class GuildDetails {
+public class GuildConfig {
 
     @Id
     private String guildId;
@@ -15,6 +15,7 @@ public class GuildDetails {
 
     private String mentionRoleID;
 
+    private int lastGameCount;
 
     public String getGuildId() {
         return guildId;
@@ -38,5 +39,13 @@ public class GuildDetails {
 
     public void setMentionRoleID(String mentionRoleID) {
         this.mentionRoleID = mentionRoleID;
+    }
+
+    public int getLastGameCount() {
+        return lastGameCount;
+    }
+
+    public void setLastGameCount(int lastGameCount) {
+        this.lastGameCount = lastGameCount;
     }
 }

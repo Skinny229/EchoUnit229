@@ -2,6 +2,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 
 
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
+import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,15 +26,8 @@ public class CreateGame {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateGame.class);
 
-    private final EchoGameService echoGameService;
 
-    @Autowired
-    public CreateGame(EchoGameService echoGameService) {
-        this.echoGameService = echoGameService;
-    }
-
-
-    public void run(MessageReceivedEvent event) {
+    public static void run(MessageReceivedEvent event) {
 
 
         ArrayList<String> cmdbreakdown = new ArrayList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
@@ -53,7 +47,7 @@ public class CreateGame {
 
         StringBuilder fullMessage = new StringBuilder();
 
-        if (!isValidID(lobbyID)) {
+        if (!FiggyUtility.isValidID(lobbyID)) {
             logger.warn("Invalid ID. Cancelling....");
             privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again.\n" +
                     "Is it possible you are still using V0.1 of the Game inviter?");
@@ -64,26 +58,27 @@ public class CreateGame {
 
         if (type.equals("public")) {
 
-            registerPublicGame(lobbyID, event.getAuthor().getId());
+            FiggyUtility.registerPublicGame(lobbyID, event.getAuthor().getId(),event.getGuild().getId());
 
-            String boisRole = event.getGuild().getRoleById(DeploymentSettings.BOIS_ROLE_ID).getAsMention();
+//            String boisRole = event.getGuild().getRoleById(DeploymentSettings.BOIS_ROLE_ID).getAsMention();
+//
+//            MessageChannel channel = event.getGuild().getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID);
+//
+//
+//            fullMessage.append(boisRole);
+//            fullMessage.append(" the available public games have been updated.");
 
-            MessageChannel channel = event.getGuild().getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID);
 
-
-            fullMessage.append(boisRole);
-            fullMessage.append(" the available public games have been updated.");
-
-            String plyMention = event.getAuthor().getAsMention();
 
 
             //Display all new and current running games to the lfg-bot channel
-            updatePublicMessageGameList(event.getGuild(), echoGameService);
+            FiggyUtility.updatePublicGamesList(event.getGuild());
 
             //Call on all @Bois from the lfg-bot channel
-            channel.sendMessage(fullMessage.toString()).queue();
+            //channel.sendMessage(fullMessage.toString()).queue();
 
             //Notify player that the game has been created
+            String plyMention = event.getAuthor().getAsMention();
             event.getMessage().getChannel().sendMessage("Game has successfully been created " + plyMention).queue();
 
 
@@ -115,7 +110,7 @@ public class CreateGame {
             for (User user : toBeInvited) {
                 //If the user is the same as the creator send separate msg
                 if (user.getId().equals(event.getAuthor().getId())) {
-                    privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...\n"+createLink(lobbyID));
+                    privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...\n"+FiggyUtility.createLink(lobbyID));
                     continue;
                 }
 
@@ -132,7 +127,7 @@ public class CreateGame {
     }
 
 
-    private void privateMessage(User user, String message) {
+    private static void privateMessage(User user, String message) {
         user.openPrivateChannel().queue((channel) ->
         {
             channel.sendMessage(message).queue();
@@ -142,88 +137,12 @@ public class CreateGame {
     /*
      * Notify user that they have been invited to a private game
      * */
-    private void privateMessageOnPrivateInvite(User user, String lobbyId) {
+    private static void privateMessageOnPrivateInvite(User user, String lobbyId) {
 
         String msg = "You have been invited to a Scrim/Private game! Please click on the following link to join\n" +
-                createLink(lobbyId);
+                FiggyUtility.createLink(lobbyId);
         privateMessage(user, msg);
 
     }
-
-
-    private void registerPublicGame(String lobbyID, String plyID) {
-        echoGameService.deletePublicGameByPlayerID(plyID);
-        EchoGamePublic game = new EchoGamePublic();
-
-        game.setLobbyID(lobbyID);
-        game.setPlayerID(plyID);
-        game.setTimeGameCreated(LocalDateTime.now());
-
-        echoGameService.savePublic(game);
-
-    }
-
-    public static void updatePublicMessageGameList(Guild guild, EchoGameService service) {
-
-        if(guild.getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID) == null)
-            return;
-
-        //Delete all messages from the bot under the lfgbot channel
-        for (Message msg : guild.getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID).getIterableHistory())
-            if (msg.getMember().getUser().getId().equals(DeploymentSettings.BOT_ID))
-                msg.delete().queue();
-
-        //Query for all public games within the DB
-        Iterable<EchoGamePublic> list = service.findAllPublic();
-
-        ArrayList<EchoGamePublic> publicGames = new ArrayList<>();
-
-        //Out of those add only those who have been created within the last 45 mins
-        for (EchoGamePublic game : list) {
-            if (ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) < 45)
-                publicGames.add(game);
-        }
-
-        //Create a Embed message for every joinable public game and post it in the LFGBOT channel
-        for (EchoGamePublic game : publicGames) {
-
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.setColor(new Color(11, 243, 8));
-
-            //Generate link to join the game
-            builder.setTitle(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game", createLink(game.getLobbyID()));
-
-            //Post time since it was created
-            builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
-
-            guild.getTextChannelById(DeploymentSettings.LFGBOT_CHANNEL_ID).sendMessage(builder.build()).queue();
-        }
-
-
-    }
-
-    /*
-     * Return current link to be used for the echoprotocol schema
-     * */
-    private static String createLink(String ID) {
-
-        return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/genGame?lobbyID=" + ID;
-    }
-
-    private static boolean isValidID(String a) {
-
-        char someChar = '-';
-        int count = 0;
-
-        for (int i = 0; i < a.length(); i++) {
-            if (a.charAt(i) == someChar) {
-                count++;
-            }
-        }
-        return a.length() > 25 && count > 3;
-    }
-
-
 
 }
