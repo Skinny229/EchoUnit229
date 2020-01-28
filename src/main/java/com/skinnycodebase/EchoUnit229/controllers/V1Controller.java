@@ -7,14 +7,14 @@ import org.springframework.http.MediaType;
 
 @RequestMapping("/api/v1")
 @RestController
-public class CreateGameController {
+public class V1Controller {
 
 
     /*
     * Current in production method of generating the join game links
     * for some reason thymeleaf is throwing 'OutOfContext' Exception in v2 of this implementation
     *
-    * See ... GameJoinerController.java and joinGame.html under templates for current non working method
+    * See ... GameJoinerController.java under templates for current non working method
     * */
     @GetMapping(value = "/genGame", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(HttpStatus.OK)
