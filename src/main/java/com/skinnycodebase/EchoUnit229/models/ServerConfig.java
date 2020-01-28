@@ -6,7 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class GuildDetails {
+public class ServerConfig {
+
 
     @Id
     private String guildId;

@@ -1,9 +1,9 @@
 package com.skinnycodebase.EchoUnit229.service;
 
 import com.skinnycodebase.EchoUnit229.models.EchoGamePrivate;
-import com.skinnycodebase.EchoUnit229.models.EchoGamePrivateRepository;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
-import com.skinnycodebase.EchoUnit229.models.EchoGamePublicRepository;
+import com.skinnycodebase.EchoUnit229.service.repos.EchoGamePrivateRepository;
+import com.skinnycodebase.EchoUnit229.service.repos.EchoGamePublicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +15,7 @@ public class EchoGameService {
 
 
     private EchoGamePublicRepository echoGamePublicRepository;
-
     private EchoGamePrivateRepository echoGamePrivateRepository;
-
     @Autowired
     public void setEchoGamePrivateRepository(EchoGamePrivateRepository echoGamePrivateRepository) {
         this.echoGamePrivateRepository = echoGamePrivateRepository;
@@ -27,6 +25,10 @@ public class EchoGameService {
     public void setEchoGamePublicRepository(EchoGamePublicRepository echoGamePublicRepository) {
         this.echoGamePublicRepository = echoGamePublicRepository;
     }
+
+
+
+
 
     public Iterable<EchoGamePublic> findAllPublic() {
         return echoGamePublicRepository.findAll();
