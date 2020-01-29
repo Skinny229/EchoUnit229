@@ -1,6 +1,7 @@
 package com.skinnycodebase.EchoUnit229;
 
-import com.skinnycodebase.EchoUnit229.discordintegration.BoisMessageIntake;
+import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
+import com.skinnycodebase.EchoUnit229.discordintegration.PublicMessageIntake;
 import com.skinnycodebase.EchoUnit229.discordintegration.PrivateMessageHandler;
 import com.skinnycodebase.EchoUnit229.discordintegration.RedeployHandler;
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
@@ -34,17 +35,8 @@ public class EchoUnit229Application {
     * Current method to make sure beans for the EchoGameService are instanciated correctly for CreateGame and DelMyGame commands
     * which require no static instance of the EchoGameService, Commands for the bot are seen as Spring Components
     * */
-    private CreateGame createGame;
-    private  DelMyGame delMyGame;
-
     @Autowired
-    public EchoUnit229Application(CreateGame createGame, DelMyGame delMyGame) {
-        this.createGame = createGame;
-        this.delMyGame = delMyGame;
-    }
-
-    @Autowired
-    Environment environment;
+    FiggyUtility figgyUtility;
 
     /*
     * Annotation makes sure spring is has started before running this method
@@ -68,9 +60,10 @@ public class EchoUnit229Application {
         /*
         *  Bot is implemented using the ListenerAdapter class
         * */
+        DeploymentSettings.BOT_ID = jda.getSelfUser().getId();
         jda.addEventListener(new RedeployHandler());
         jda.addEventListener(new PrivateMessageHandler());
-        jda.addEventListener(new BoisMessageIntake(createGame, delMyGame));
+        jda.addEventListener(new PublicMessageIntake());
 
     }
 }

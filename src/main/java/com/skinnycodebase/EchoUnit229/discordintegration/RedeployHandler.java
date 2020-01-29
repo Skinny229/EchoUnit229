@@ -1,8 +1,12 @@
 package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
+import com.skinnycodebase.EchoUnit229.models.GuildConfig;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.Optional;
+
 
 public class RedeployHandler extends ListenerAdapter {
 
@@ -20,6 +24,19 @@ public class RedeployHandler extends ListenerAdapter {
             {
                 channel.sendMessage("It seems I have been reloaded. Just to let you know").queue();
             });
+
+
+        FiggyUtility.updatePublicGamesList(event.getGuild());
+
+        GuildConfig config;
+            config = new GuildConfig();
+            config.setGuildId(event.getGuild().getId());
+            config.setPublicListingChannelId("669569226427858954");
+            FiggyUtility.saveConfig(config);
+
+
+
+
     }
 
 }

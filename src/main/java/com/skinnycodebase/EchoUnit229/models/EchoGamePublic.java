@@ -17,14 +17,17 @@ public class EchoGamePublic {
     //Discord player ID from the game generated
     private String playerID;
 
+    //Guild id generated from
+    private String guildId;
+
     //EchoVR lobbyID
     private String lobbyID;
 
     private LocalDateTime timeGameCreated;
 
-    private int currentPlayers;
-
     private int desiredPlayers;
+
+    private boolean isInUse;
 
 
     public long getId() {
@@ -59,11 +62,27 @@ public class EchoGamePublic {
         this.timeGameCreated = timeGameCreated;
     }
 
-    public int getCurrentPlayers() {
-        return currentPlayers;
+    public String getGuildId() {
+        return guildId;
     }
 
-    public void setCurrentPlayers(int currentPlayers) {
-        this.currentPlayers = currentPlayers;
+    public void setGuildId(String guildId) {
+        this.guildId = guildId;
+    }
+
+    public int getDesiredPlayers() {
+        return desiredPlayers;
+    }
+
+    public void setDesiredPlayers(int desiredPlayers) {
+        this.desiredPlayers = desiredPlayers;
+    }
+
+    public boolean isInUse() {
+        return isInUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        isInUse = inUse;
     }
 }
