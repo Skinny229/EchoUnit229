@@ -4,12 +4,12 @@ import com.skinnycodebase.EchoUnit229.models.EchoGamePrivate;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
 import com.skinnycodebase.EchoUnit229.service.repos.EchoGamePrivateRepository;
 import com.skinnycodebase.EchoUnit229.service.repos.EchoGamePublicRepository;
-import org.jetbrains.annotations.NotNull;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 @Service
@@ -30,23 +30,31 @@ public class EchoGameService {
     }
 
 
-    public ArrayList<EchoGamePublic> findAllPublic(String guildId) {
+    public ArrayList<EchoGamePublic> findAllActivePublic(String guildId) {
         ArrayList<EchoGamePublic> list = new ArrayList<>();
         for (EchoGamePublic gamePublic : echoGamePublicRepository.findAll())
-            if (gamePublic.getGuildId().equals(guildId))
+            if (gamePublic.getGuildId().equals(guildId) && gamePublic.isInUse())
                 list.add(gamePublic);
         return list;
 
+    }
+
+    public boolean hasActivePublicIn(Guild guild, User user){
+        for(EchoGamePublic pub : findAllActivePublic(guild.getId()))
+            if(pub.getPlayerID().equals(user.getId()))
+                return true;
+        return false;
     }
 
     public void savePublic(EchoGamePublic game) {
         echoGamePublicRepository.save(game);
     }
 
-    public boolean deletePublicGameByPlayerID(String playerId,String guildId) {
-        for (EchoGamePublic game : findAllPublic(guildId))
-            if (game.getPlayerID().equals(playerId)) {
-                echoGamePublicRepository.deleteById(game.getId());
+    public boolean decommissionGame(String guildId, String discordPlayerId) {
+        for (EchoGamePublic game : findAllActivePublic(guildId))
+            if (game.getPlayerID().equals(discordPlayerId)) {
+                game.setInUse(false);
+                savePublic(game);
                 return true;
             }
         return false;

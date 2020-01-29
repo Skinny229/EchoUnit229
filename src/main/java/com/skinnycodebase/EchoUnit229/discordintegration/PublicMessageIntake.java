@@ -54,6 +54,7 @@ public class PublicMessageIntake extends ListenerAdapter {
                     DelMyGame.run(event);
                     event.getMessage().delete().queue();
                     break;
+
                 default:
                     logger.info("No command found for [ {} ]", command);
             }

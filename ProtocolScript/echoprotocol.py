@@ -29,10 +29,8 @@ def restartEchoIfRunning():
             pass
     return False
 
-def postGameCreationPublic():
-    return
+def postGameCreationPublic(pubid):
 
-def postGameCreationPrivate():
     return
 
 
@@ -61,7 +59,8 @@ def startEchoProtocol():
 
     switcher = {
         "launch":launchGame(echoArgs[2]),
-        "spec":launchGameSpectator(echoArgs[2])
+        "spec":launchGameSpectator(echoArgs[2]),
+        "createpub":postGameCreationPublic(echoArgs[2])
 
     }
 

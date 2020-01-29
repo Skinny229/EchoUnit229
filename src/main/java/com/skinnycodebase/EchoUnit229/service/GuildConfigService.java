@@ -19,7 +19,11 @@ public class GuildConfigService {
     }
 
     public Optional<GuildConfig> getById(String guildId){
-        return guildConfigRepository.findById(guildId);
+        Optional<GuildConfig> f = Optional.empty();
+        for(GuildConfig config : guildConfigRepository.findAll())
+            if(config.getGuildId().equals(guildId))
+                f = Optional.of(config);
+        return f;
     }
 
 

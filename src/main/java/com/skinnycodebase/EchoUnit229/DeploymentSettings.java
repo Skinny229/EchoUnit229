@@ -15,7 +15,7 @@ public class DeploymentSettings {
 
     public static final String LFGBOT_CHANNEL_ID = "661307549496115232";
 
-    public static final String BOT_ID ="661304672832847872";
+    public static String BOT_ID;
 
     public static final String ESO_GUILD_ID = "623999906646065172";
 

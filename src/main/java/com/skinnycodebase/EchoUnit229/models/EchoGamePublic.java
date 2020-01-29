@@ -25,9 +25,9 @@ public class EchoGamePublic {
 
     private LocalDateTime timeGameCreated;
 
-    private int currentPlayers;
-
     private int desiredPlayers;
+
+    private boolean isInUse;
 
 
     public long getId() {
@@ -62,14 +62,6 @@ public class EchoGamePublic {
         this.timeGameCreated = timeGameCreated;
     }
 
-    public int getCurrentPlayers() {
-        return currentPlayers;
-    }
-
-    public void setCurrentPlayers(int currentPlayers) {
-        this.currentPlayers = currentPlayers;
-    }
-
     public String getGuildId() {
         return guildId;
     }
@@ -84,5 +76,13 @@ public class EchoGamePublic {
 
     public void setDesiredPlayers(int desiredPlayers) {
         this.desiredPlayers = desiredPlayers;
+    }
+
+    public boolean isInUse() {
+        return isInUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        isInUse = inUse;
     }
 }

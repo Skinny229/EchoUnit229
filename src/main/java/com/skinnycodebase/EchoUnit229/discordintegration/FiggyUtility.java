@@ -3,6 +3,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
+import com.skinnycodebase.EchoUnit229.models.EchoUpdateResponseBody;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import com.skinnycodebase.EchoUnit229.service.GuildConfigService;
@@ -11,14 +12,16 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-import java.awt.*;
+import java.awt.Color;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -27,6 +30,7 @@ public class FiggyUtility  {
 
     private static EchoGameService echoGameService;
     private static GuildConfigService guildService;
+    private static List<Guild> guilds;
 
     @Autowired
     public FiggyUtility(EchoGameService service, GuildConfigService guildConfigService){
@@ -36,6 +40,9 @@ public class FiggyUtility  {
             FiggyUtility.guildService = guildConfigService;
     }
 
+    public static void setGuilds(List<Guild> guildsl){
+        guilds = guildsl;
+    }
 
 
 
@@ -59,11 +66,11 @@ public class FiggyUtility  {
 
         //Delete messages within channel
         for (Message msg : listingChanel.getIterableHistory())
-            if (msg.getMember().getUser().getId().equals(DeploymentSettings.BOT_ID))
+            if (msg.getMember().getId().equals(DeploymentSettings.BOT_ID))
                 msg.delete().queue();
 
 
-        Iterable<EchoGamePublic> list = echoGameService.findAllPublic(guild.getId());
+        Iterable<EchoGamePublic> list = echoGameService.findAllActivePublic(guild.getId());
         ArrayList<EchoGamePublic> publicGames = new ArrayList<>();
 
         //Out of those add only those who have been created within the last 45 mins
@@ -108,7 +115,7 @@ public class FiggyUtility  {
 
     public static String createLink(String ID) {
 
-        return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyID=" + ID;
+        return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
 
     public static Optional<GuildConfig> getConfig(String guildId){
@@ -123,10 +130,44 @@ public class FiggyUtility  {
         game.setPlayerID(userId);
         game.setGuildId(guildId);
         game.setTimeGameCreated(LocalDateTime.now());
+        game.setInUse(true);
         echoGameService.savePublic(game);
     }
+    public static boolean hasActiveGameInGuild(Guild guild,User user){
+        return echoGameService.hasActivePublicIn(guild, user);
+    }
+    public static void updateFromRequest(EchoUpdateResponseBody body){
+            //EchoGamePublic pub = echoGameService.findBy
 
-    public static boolean deletePublicGameByPlayerID(String idd, String id1) {
-        return true;
+            for(Guild g : guilds)
+                updatePublicGamesList(g);
+    }
+    public static void decommissionGame(Guild guild, User user){
+
+        if(echoGameService.decommissionGame(guild.getId(), user.getId()))
+            privateMessage(user, "Game deleted");
+        else
+            privateMessage(user, "No active game found but I'm updating the listings anyways");
+
+
+        updatePublicGamesList(guild);
+
+    }
+    public static void privateMessage(User user, String message) {
+        user.openPrivateChannel().queue((channel) ->
+        {
+            channel.sendMessage(message).queue();
+        });
+    }
+
+    /*
+     * Notify user that they have been invited to a private game
+     * */
+    public static void privateMessageOnPrivateInvite(User user, String lobbyId) {
+
+        String msg = "You have been invited to a Scrim/Private game! Please click on the following link to join\n" +
+                FiggyUtility.createLink(lobbyId);
+        privateMessage(user, msg);
+
     }
 }

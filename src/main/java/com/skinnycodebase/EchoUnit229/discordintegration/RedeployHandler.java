@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.Optional;
 
+
 public class RedeployHandler extends ListenerAdapter {
 
 
@@ -23,6 +24,9 @@ public class RedeployHandler extends ListenerAdapter {
             {
                 channel.sendMessage("It seems I have been reloaded. Just to let you know").queue();
             });
+
+
+        FiggyUtility.updatePublicGamesList(event.getGuild());
 
         GuildConfig config;
             config = new GuildConfig();

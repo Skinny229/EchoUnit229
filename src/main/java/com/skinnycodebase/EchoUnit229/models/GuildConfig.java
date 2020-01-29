@@ -9,6 +9,9 @@ import javax.persistence.Id;
 public class GuildConfig {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
     private String guildId;
 
     private String publicListingChannelId;
@@ -16,6 +19,15 @@ public class GuildConfig {
     private String mentionRoleID;
 
     private int lastGameCount;
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getGuildId() {
         return guildId;

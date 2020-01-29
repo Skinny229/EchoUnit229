@@ -60,6 +60,7 @@ public class EchoUnit229Application {
         /*
         *  Bot is implemented using the ListenerAdapter class
         * */
+        DeploymentSettings.BOT_ID = jda.getSelfUser().getId();
         jda.addEventListener(new RedeployHandler());
         jda.addEventListener(new PrivateMessageHandler());
         jda.addEventListener(new PublicMessageIntake());
