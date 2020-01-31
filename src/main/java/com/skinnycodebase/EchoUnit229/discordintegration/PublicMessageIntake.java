@@ -2,6 +2,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.DelMyGame;
+import com.skinnycodebase.EchoUnit229.discordintegration.commands.Set;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -54,7 +55,9 @@ public class PublicMessageIntake extends ListenerAdapter {
                     DelMyGame.run(event);
                     event.getMessage().delete().queue();
                     break;
-
+                case "SET":
+                    Set.run(event);
+                    break;
                 default:
                     logger.info("No command found for [ {} ]", command);
             }

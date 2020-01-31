@@ -1,12 +1,11 @@
 package com.skinnycodebase.EchoUnit229.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name="echo_game_private")
 public class EchoGamePrivate {
 
 

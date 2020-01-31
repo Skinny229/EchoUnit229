@@ -2,6 +2,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -26,14 +27,25 @@ public class RedeployHandler extends ListenerAdapter {
             });
 
 
+
+
+        Optional<GuildConfig> configOptional = FiggyUtility.getConfig(event.getGuild().getId());
+
+        //If set up doesnt exists run inital setup
+        if(!configOptional.isPresent()){
+            User serverOwner = event.getGuild().getOwner().getUser();
+            GuildConfig newConfig = new GuildConfig();
+            newConfig.setGuildId(event.getGuild().getId());
+            newConfig.setLastGameCount(0);
+            FiggyUtility.saveConfig(newConfig);
+            FiggyUtility.privateMessage(serverOwner,
+                    "Howdy owner! It seems you either just added the server or I lost your data(oops).\n" +
+                            "To set up public listings WITHIN THE SERVER YOU ARE SETTING UP type `-set listings [id]`\n" +
+                            "where `[id]` is the text channel id\n" +
+                            "This will automatically enable your public listings, which I recommend only im able to type in.");
+            return;
+        }
         FiggyUtility.updatePublicGamesList(event.getGuild());
-
-        GuildConfig config;
-            config = new GuildConfig();
-            config.setGuildId(event.getGuild().getId());
-            config.setPublicListingChannelId("669569226427858954");
-            FiggyUtility.saveConfig(config);
-
 
 
 

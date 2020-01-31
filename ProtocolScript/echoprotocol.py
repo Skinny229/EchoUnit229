@@ -1,4 +1,5 @@
-import os, string, sys, subprocess, psutil, time
+import os, string, sys, subprocess, psutil, time, requests
+from time import sleep
 
 
 processName = "echovr"
@@ -29,13 +30,70 @@ def restartEchoIfRunning():
             pass
     return False
 
-def postGameCreationPublic(pubid):
+def isEchoRunning():
+    '''
+Check if there is any running process that contains the given name processName.
+'''
+    #Iterate over the all the running process
+    for proc in psutil.process_iter():
+        try:
+         # Check if process name contains the given name string.
+         if processName.lower() in proc.name().lower():
+            proc.kill()
+            return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+    pass
+    return False
+
+
+def postGameCreationPublic(uniqueId):
+    getEchoJson()
+    return
+
+
+def getEchoJson():
+
+    URL = "http://localhost/session"
+
+    #request = requests.get(url = URL)
+
+    ##data = request.json()
+
+    data = {'sessionId':12312312}
+
+    URL2 = "http://localhost:8080/api/v2/updateGame"
+
+    requests.post(url = URL2, json = data)
+    return
+
+def startGameUpdateLoop(uniqueId):
+    while True:
+        if()
+        sleep(5)
+
 
     return
 
 
-def sendGameUpdate():
+
+def startEchoProtocol():
+
+
+    echoArgs = sys.argv[1].split(':')
+
+    action = echoArgs[1]
+
+
+    if action == "launch":
+        launchGame(echoArgs[2])
+    if action == "spec":
+       launchGameSpectator(echoArgs[2])
+    if action == "createpub":
+       postGameCreationPublic(echoArgs[2])
     return
+
+
+startEchoProtocol()
 
 
 def launchGame(lobbyid):
@@ -49,25 +107,3 @@ def launchGameSpectator(lobbyid):
     time.sleep(2)
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid, "-spectatorstream"])
     return
-
-def startEchoProtocol():
-
-
-    echoArgs = sys.argv[1].split(':')
-
-    action = echoArgs[1]
-
-    switcher = {
-        "launch":launchGame(echoArgs[2]),
-        "spec":launchGameSpectator(echoArgs[2]),
-        "createpub":postGameCreationPublic(echoArgs[2])
-
-    }
-
-    switcher.get(action, "oops")
-
-    return
-
-
-startEchoProtocol()
-

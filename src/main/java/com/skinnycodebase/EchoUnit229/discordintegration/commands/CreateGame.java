@@ -49,6 +49,11 @@ public class CreateGame {
 
 
         if (type.equals("public")) {
+            if(!FiggyUtility.getConfig(event.getGuild().getId()).isPresent()){
+                event.getMessage().getTextChannel().sendMessage("Hmmm. It seems the owner hasn't set a public listing channels, Canceling...").queue();
+                return;
+            }
+
 
             if (!FiggyUtility.hasActiveGameInGuild(event.getGuild(), event.getAuthor()))
                 FiggyUtility.registerPublicGame(lobbyID, event.getAuthor().getId(), event.getGuild().getId());

@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ public class FiggyUtility  {
     private static EchoGameService echoGameService;
     private static GuildConfigService guildService;
     private static List<Guild> guilds;
+    private static HashSet<String> possibleUniqueIds = new HashSet<>();
 
     @Autowired
     public FiggyUtility(EchoGameService service, GuildConfigService guildConfigService){
@@ -56,7 +58,11 @@ public class FiggyUtility  {
         GuildConfig config = configOptional.get();
 
         //listing channel
+        if(config.getPublicListingChannelId() == null)
+            return;
         TextChannel listingChanel = guild.getTextChannelById(config.getPublicListingChannelId());
+
+
 
         //@role mention if it exists
         String mentionRole  = "";
@@ -118,6 +124,7 @@ public class FiggyUtility  {
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
 
+
     public static Optional<GuildConfig> getConfig(String guildId){
         return guildService.getById(guildId);
     }
@@ -137,10 +144,7 @@ public class FiggyUtility  {
         return echoGameService.hasActivePublicIn(guild, user);
     }
     public static void updateFromRequest(EchoUpdateResponseBody body){
-            //EchoGamePublic pub = echoGameService.findBy
 
-            for(Guild g : guilds)
-                updatePublicGamesList(g);
     }
     public static void decommissionGame(Guild guild, User user){
 
@@ -160,6 +164,9 @@ public class FiggyUtility  {
         });
     }
 
+
+
+
     /*
      * Notify user that they have been invited to a private game
      * */
@@ -169,5 +176,12 @@ public class FiggyUtility  {
                 FiggyUtility.createLink(lobbyId);
         privateMessage(user, msg);
 
+    }
+
+    public static boolean addUniqueId(String id){
+        if(possibleUniqueIds.contains(id))
+            return false;
+        possibleUniqueIds.add(id);
+        return true;
     }
 }
