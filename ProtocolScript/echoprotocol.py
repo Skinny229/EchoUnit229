@@ -1,6 +1,67 @@
 import os, string, sys, subprocess, psutil, time, requests
-from time import sleep
 
+
+
+def startEchoProtocol():
+
+
+    echoArgs = sys.argv[1].split(':')
+
+    action = echoArgs[1]
+
+
+    if action == "launch":
+        launchGame(echoArgs[2])
+    if action == "spec":
+       launchGameSpectator(echoArgs[2])
+    if action == "createpub":
+       postGameCreationPublic(echoArgs[2])
+    sys.exit()
+
+
+
+startEchoProtocol()
+
+createGameUrl = "localhost:8080/api/v2/createGame"
+
+updateGameUrl = "localhost:8080/api/v2/updateGame"
+
+
+def getEchoJson():
+
+    URL = "http://localhost/session"
+
+    response = requests.get(url = URL)
+
+    return  response.json()
+
+
+def postGameCreationPublic(uniqueId):
+    data = getEchoJson()
+    ##Code goes here
+    ##IMEPLEMENT ME KUNGGG
+
+
+
+    ##requests.post(url = createGameUrl, json  = )
+    ##startGameUpdateLoop(uniqueId)
+
+    return
+
+def genEchoResponseBody(uniqueid):
+    gameData = getEchoJson()
+    jsonFormated = ""
+
+
+    return jsonFormated
+
+
+def startGameUpdateLoop(uniqueId):
+    return
+
+
+
+###dont worry bout below code
 
 processName = "echovr"
 
@@ -32,69 +93,17 @@ def restartEchoIfRunning():
 
 def isEchoRunning():
     '''
-Check if there is any running process that contains the given name processName.
-'''
+    Check if there is any running process that contains the given name processName.
+    '''
     #Iterate over the all the running process
     for proc in psutil.process_iter():
         try:
-         # Check if process name contains the given name string.
-         if processName.lower() in proc.name().lower():
-            proc.kill()
-            return True
+            # Check if process name contains the given name string.
+            if processName.lower() in proc.name().lower():
+                return True
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-    pass
+            pass
     return False
-
-
-def postGameCreationPublic(uniqueId):
-    getEchoJson()
-    return
-
-
-def getEchoJson():
-
-    URL = "http://localhost/session"
-
-    #request = requests.get(url = URL)
-
-    ##data = request.json()
-
-    data = {'sessionId':12312312}
-
-    URL2 = "http://localhost:8080/api/v2/updateGame"
-
-    requests.post(url = URL2, json = data)
-    return
-
-def startGameUpdateLoop(uniqueId):
-    while True:
-        if()
-        sleep(5)
-
-
-    return
-
-
-
-def startEchoProtocol():
-
-
-    echoArgs = sys.argv[1].split(':')
-
-    action = echoArgs[1]
-
-
-    if action == "launch":
-        launchGame(echoArgs[2])
-    if action == "spec":
-       launchGameSpectator(echoArgs[2])
-    if action == "createpub":
-       postGameCreationPublic(echoArgs[2])
-    return
-
-
-startEchoProtocol()
-
 
 def launchGame(lobbyid):
     restartEchoIfRunning()
