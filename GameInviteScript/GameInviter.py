@@ -13,7 +13,7 @@ def getPublicGameInvite():
 	
 	if data:##if not null
 		lobbyid = data['sessionid']
-		invite = "-creategame " + lobbyid
+		invite = "-creategame " + lobbyid + " "
 
 	clipboard.copy(invite)
 		
