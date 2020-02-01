@@ -1,48 +1,5 @@
 import os, string, sys, subprocess, psutil, time, requests, json
-from time import sleep
 
-createGameUrl = "http://localhost:8080/api/v2/createPubGame"
-updateGameUrl = "http://localhost:8080/api/v2/updateGame"
-
-def getEchoJson():
-
-    URL = "http://localhost/session"
-
-    response = requests.get(url = URL)
-
-    return  response.json()
-
-def postGameCreationPublic():
-    ##data = getEchoJson()
-    ##Code goes here
-    ##IMEPLEMENT ME KUNGGG
-
-
-    gameData = getEchoJson()
-
-
-
-
-    a = requests.post(url = createGameUrl, json  = gameData)
-
-    while True:
-        sleep(1)
-        gameData = getEchoJson()
-        aa = requests.post(url = updateGameUrl, json  = gameData)
-    ##startGameUpdateLoop(uniqueId)
-
-    return
-
-def genEchoResponseBody():
-    gameData = getEchoJson()
-    jsonFormated = ""
-
-
-    return jsonFormated
-
-
-def startGameUpdateLoop():
-    return
 
 
 def startEchoProtocol():
@@ -58,12 +15,59 @@ def startEchoProtocol():
     if action == "spec":
        launchGameSpectator(echoArgs[2])
     if action == "createpub":
-       postGameCreationPublic()
+       postGameCreationPublic(echoArgs[2])
     sys.exit()
 
 
 
-startEchoProtocol()
+
+
+createGameUrl = "localhost:8080/api/v2/createGame"
+
+updateGameUrl = "localhost:8080/api/v2/updateGame"
+
+
+def getEchoJson():
+
+    URL = "http://localhost/session"
+
+    response = requests.get(url = URL)
+
+    return  response.json()
+
+
+def postGameCreationPublic(uniqueId):
+    data = getEchoJson()
+    
+    players = [player['name'] for team in data['teams'] for player in team['players']]
+    matchdetails = {
+    'sessionid' : data['sessionid'],
+    'client_name' : data['client_name'],
+    'game_clock_display' : data['game_clock_display'],
+    'game_status' : data['game_status'],
+    'players' : players,
+    'orange_points' : data['orange_points'],
+    'blue_points' : data['blue_points'],
+    'uniqueId' : uniqueId
+    }
+    currentMatchDetails = json.dumps(matchdetails)
+    print(currentMatchDetails)
+
+    ##requests.post(url = createGameUrl, json  = )
+    ##startGameUpdateLoop(uniqueId)
+
+    return
+
+def genEchoResponseBody(uniqueid):
+    gameData = getEchoJson()
+    jsonFormated = ""
+
+
+    return jsonFormated
+
+
+def startGameUpdateLoop(uniqueId):
+    return
 
 
 
@@ -122,3 +126,5 @@ def launchGameSpectator(lobbyid):
     time.sleep(2)
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid, "-spectatorstream"])
     return
+
+startEchoProtocol()
