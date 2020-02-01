@@ -1,5 +1,48 @@
-import os, string, sys, subprocess, psutil, time, requests
+import os, string, sys, subprocess, psutil, time, requests, json
+from time import sleep
 
+createGameUrl = "http://localhost:8080/api/v2/createPubGame"
+updateGameUrl = "http://localhost:8080/api/v2/updateGame"
+
+def getEchoJson():
+
+    URL = "http://localhost/session"
+
+    response = requests.get(url = URL)
+
+    return  response.json()
+
+def postGameCreationPublic():
+    ##data = getEchoJson()
+    ##Code goes here
+    ##IMEPLEMENT ME KUNGGG
+
+
+    gameData = getEchoJson()
+
+
+
+
+    a = requests.post(url = createGameUrl, json  = gameData)
+
+    while True:
+        sleep(1)
+        gameData = getEchoJson()
+        aa = requests.post(url = updateGameUrl, json  = gameData)
+    ##startGameUpdateLoop(uniqueId)
+
+    return
+
+def genEchoResponseBody():
+    gameData = getEchoJson()
+    jsonFormated = ""
+
+
+    return jsonFormated
+
+
+def startGameUpdateLoop():
+    return
 
 
 def startEchoProtocol():
@@ -15,49 +58,12 @@ def startEchoProtocol():
     if action == "spec":
        launchGameSpectator(echoArgs[2])
     if action == "createpub":
-       postGameCreationPublic(echoArgs[2])
+       postGameCreationPublic()
     sys.exit()
 
 
 
 startEchoProtocol()
-
-createGameUrl = "localhost:8080/api/v2/createGame"
-
-updateGameUrl = "localhost:8080/api/v2/updateGame"
-
-
-def getEchoJson():
-
-    URL = "http://localhost/session"
-
-    response = requests.get(url = URL)
-
-    return  response.json()
-
-
-def postGameCreationPublic(uniqueId):
-    data = getEchoJson()
-    ##Code goes here
-    ##IMEPLEMENT ME KUNGGG
-
-
-
-    ##requests.post(url = createGameUrl, json  = )
-    ##startGameUpdateLoop(uniqueId)
-
-    return
-
-def genEchoResponseBody(uniqueid):
-    gameData = getEchoJson()
-    jsonFormated = ""
-
-
-    return jsonFormated
-
-
-def startGameUpdateLoop(uniqueId):
-    return
 
 
 

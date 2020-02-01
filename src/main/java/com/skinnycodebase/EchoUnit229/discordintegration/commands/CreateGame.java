@@ -1,6 +1,7 @@
 package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
+import com.skinnycodebase.EchoUnit229.models.GuildConfig;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
@@ -8,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class CreateGame {
@@ -49,7 +47,9 @@ public class CreateGame {
 
 
         if (type.equals("public")) {
-            if(!FiggyUtility.getConfig(event.getGuild().getId()).isPresent()){
+
+            GuildConfig config = FiggyUtility.getConfig(event.getGuild().getId()).get();
+            if(config.getPublicListingChannelId() == null){
                 event.getMessage().getTextChannel().sendMessage("Hmmm. It seems the owner hasn't set a public listing channels, Canceling...").queue();
                 return;
             }
@@ -63,7 +63,7 @@ public class CreateGame {
             }
 
             //Display all new and current running games to the lfg-bot channel
-            FiggyUtility.updatePublicGamesList(event.getGuild());
+            FiggyUtility.updateAllPublicGamesList(event.getGuild());
 
 
             //Notify player that the game has been created

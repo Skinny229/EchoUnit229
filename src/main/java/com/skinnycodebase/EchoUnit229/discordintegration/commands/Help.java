@@ -7,6 +7,9 @@ public class Help  {
 
     public static void run(MessageReceivedEvent event){
 
+        String message = "";
+
+        event.getChannel().sendMessage(message).queue();
 
     }
 

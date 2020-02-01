@@ -27,17 +27,18 @@ public class EchoProtocolUpdateController {
 
     @PostMapping(path = "/updateGame", consumes = "application/json")
     public HttpStatus updateGame(@RequestBody EchoUpdateResponseBody body){
-        //FiggyUtility.updateFromRequest(body);
-        logger.info("WE DID IT");
-        logger.info(body.toString());
+        if(body.getSessionid() == null || body.getClient_name() == null)
+            return HttpStatus.BAD_REQUEST;
+        FiggyUtility.updateAutoPublicGame(body);
         return HttpStatus.OK;
     }
 
     @PostMapping(path = "/createPubGame", consumes = "application/json")
     public HttpStatus createPub(@RequestBody EchoUpdateResponseBody body){
-        //FiggyUtility.updateFromRequest(body);
-        logger.info("WE DID IT");
-        logger.info(body.toString());
+        if(body.getSessionid() == null || body.getClient_name() == null)
+            return HttpStatus.BAD_REQUEST;
+
+        FiggyUtility.registerAutoPublicGame(body);
         return HttpStatus.OK;
     }
 

@@ -2,6 +2,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.DelMyGame;
+import com.skinnycodebase.EchoUnit229.discordintegration.commands.Help;
 import com.skinnycodebase.EchoUnit229.discordintegration.commands.Set;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -57,6 +58,9 @@ public class PublicMessageIntake extends ListenerAdapter {
                     break;
                 case "SET":
                     Set.run(event);
+                    break;
+                case "HELP":
+                    Help.run(event);
                     break;
                 default:
                     logger.info("No command found for [ {} ]", command);

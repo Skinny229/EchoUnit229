@@ -45,7 +45,7 @@ public class RedeployHandler extends ListenerAdapter {
                             "This will automatically enable your public listings, which I recommend only im able to type in.");
             return;
         }
-        FiggyUtility.updatePublicGamesList(event.getGuild());
+        FiggyUtility.updateAllPublicGamesList(event.getGuild());
 
 
 
