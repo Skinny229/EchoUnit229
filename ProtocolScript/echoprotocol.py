@@ -58,9 +58,9 @@ def startEchoProtocol():
     action = echoArgs[1]
 
     switcher = {
-        "launch":launchGame(echoArgs[2]),
-        "spec":launchGameSpectator(echoArgs[2]),
-        "createpub":postGameCreationPublic(echoArgs[2])
+        "//launch":launchGame(echoArgs[2]),
+        "//spec":launchGameSpectator(echoArgs[2]),
+        "//createpub":postGameCreationPublic(echoArgs[2])
 
     }
 
