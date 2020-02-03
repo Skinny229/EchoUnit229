@@ -8,6 +8,8 @@ public class EchoUpdateResponseBody {
 
     private String sessionid;
 
+    private String guildId;
+
     private String client_name;
 
     private String game_clock_display;

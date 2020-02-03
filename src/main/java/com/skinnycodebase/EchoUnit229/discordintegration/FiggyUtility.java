@@ -106,17 +106,52 @@ public class FiggyUtility {
     private static EmbedBuilder getPubBuilder(EchoGamePublic game, EchoUpdateResponseBody body) {
         EmbedBuilder builder = new EmbedBuilder();
 
-        builder.setColor(new Color(19, 199, 243));
+        builder.setColor(new Color(0, 217, 243));
+
+        String link = body.getPlayers().length  >= 8 ? " " : createLink(game.getSessionid());
 
         //Generate link to join the game
-        builder.setTitle(game.getPlayerName() + "'s game(click me)", createLink(game.getSessionid()));
+        builder.setTitle(game.getPlayerName() + "'s game(click me)", link);
 
         //Post time since it was created
         builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
 
-        builder.addField("Game Status", body.getGame_status(), true);
+        String status;
+        switch(body.getGame_status()){
+            case "pre_match":
+                status = "Waiting to start....";
+                break;
+            case "playing":
+                status = "Yeeting Disk back and forth";
+                break;
+            case "score":
+                status  = "Gooooooaaaaal";
+                break;
+            case "round_start":
+                status = "In the tubes, ready to launch!";
+                break;
+            case "round_over":
+                status = "Game completed";
+                break;
+            case "post_match":
+                status = "Set Completed";
+                break;
+            case "pre_sudden_death":
+            case "sudden_death":
+                status = "SUDDENT DEATH";
+                break;
+            case "post_sudden_death":
+                status = (body.getBlue_points() > body.getOrange_points() ? "Orange" : "Blue") + " choked hard";
+                break;
+            default:
+                status = "????";
+        }
 
-        builder.addField("Game Clock" , body.getGame_clock_display(), true);
+        builder.addField("Game Status", status, true);
+
+        builder.addField("Score", String.format("Orange [%s] - [%s] Blue", body.getOrange_points(), body.getBlue_points()), false );
+
+        builder.addField("Game Clock" , body.getGame_clock_display(), false);
 
         StringBuilder playerList = new StringBuilder();
         playerList.append(" ");
@@ -124,13 +159,13 @@ public class FiggyUtility {
         if (body.getPlayers() != null) {
             playerSize = body.getPlayers().length;
             for (String player : body.getPlayers())
-                playerList.append(player + "\n");
+                playerList.append(player.equals("Kungg") ? "Kungg aka 'Choke Master'" : player).append("\n");
         }
             else
                 playerSize = 0;
 
 
-        builder.addField(String.format("Players [%s]",playerSize), playerList.toString(), true);
+        builder.addField(String.format("Players [%s]",playerSize), playerList.toString(), false);
 
         return builder;
     }
@@ -149,8 +184,8 @@ public class FiggyUtility {
     }
 
     public static String createLink(String ID) {
-        return String.format("<echoprotocol://launch:{}>",ID);
-       // return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
+       // return String.format("<echoprotocol://launch:%s>",ID);
+        return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
 
     public static Optional<GuildConfig> getConfig(String guildId) {

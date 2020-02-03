@@ -21,9 +21,9 @@ def postGameCreationPublic():
         print("It seems either you dont have echo arena open or you're still in the lobby. Please join a private game")
         sys.exit()
 
-    if not gameData['private_match']:
-        print("Live updates are not enabled for public games")
-        sys.exit()
+   ## if not gameData['private_match']:
+     ##   print("Live updates are not enabled for public games")
+       ## sys.exit()
 
     response = requests.post(url = liveListingsUrl, json  = genEchoResponseBody())
     print("Response to POST REQUEST: " + response.text)
