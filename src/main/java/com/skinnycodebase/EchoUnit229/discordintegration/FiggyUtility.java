@@ -189,6 +189,7 @@ public class FiggyUtility {
         Guild guild = EchoUnit229Application.jda.getGuildById(testingid);
         GuildConfig config = getConfig(guild.getId()).get();
         EchoGamePublic pub = echoGameService.getPublicSessionId(body.getSessionid());
+        pub.setTimeLastLiveUpdate(LocalDateTime.now());
         guild.getTextChannelById(config.getPublicListingChannelId()).editMessageById(
                 pub.getMessageId(),
                 getPubBuilder(pub, body).build()

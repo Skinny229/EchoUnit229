@@ -29,6 +29,8 @@ public class EchoGamePublic {
 
     private boolean isInUse;
 
+    private LocalDateTime timeLastLiveUpdate;
+
 
     public long getId() {
         return id;
@@ -92,5 +94,13 @@ public class EchoGamePublic {
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    public LocalDateTime getTimeLastLiveUpdate() {
+        return timeLastLiveUpdate;
+    }
+
+    public void setTimeLastLiveUpdate(LocalDateTime timeLastLiveUpdate) {
+        this.timeLastLiveUpdate = timeLastLiveUpdate;
     }
 }

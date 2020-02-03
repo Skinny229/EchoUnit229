@@ -1,8 +1,10 @@
 package com.skinnycodebase.EchoUnit229.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
+@JsonFormat
 public class EchoUpdateResponseBody {
-
 
     private String sessionid;
 
@@ -12,8 +14,11 @@ public class EchoUpdateResponseBody {
 
     private String game_status;
 
-    private String[] players;
+    private String players[];
 
+    private int orange_points;
+
+    private int blue_points;
 
     public String getSessionid() {
         return sessionid;
@@ -47,12 +52,28 @@ public class EchoUpdateResponseBody {
         this.game_status = game_status;
     }
 
-    public String[] getPlayers() {
+   public String[] getPlayers() {
         return players;
     }
 
-    public void setPlayers(String[] players) {
+   public void setPlayers(String[] players) {
         this.players = players;
     }
 
+
+    public int getBlue_points() {
+        return blue_points;
+    }
+
+    public void setBlue_points(int blue_points) {
+        this.blue_points = blue_points;
+    }
+
+    public int getOrange_points() {
+        return orange_points;
+    }
+
+    public void setOrange_points(int orange_points) {
+        this.orange_points = orange_points;
+    }
 }

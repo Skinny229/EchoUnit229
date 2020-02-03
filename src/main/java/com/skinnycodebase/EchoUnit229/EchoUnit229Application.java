@@ -45,7 +45,6 @@ public class EchoUnit229Application {
     * */
     @EventListener(ApplicationReadyEvent.class)
     public void botStartup() {
-
         logger.info("Starting with address[{}] and hostname[{}]", InetAddress.getLoopbackAddress().getHostAddress(), InetAddress.getLoopbackAddress().getHostName());
         //Boot JDA (Discord bot)
         try {

@@ -1,30 +1,8 @@
 import os, string, sys, subprocess, psutil, time, requests, json
 
 
+liveListingsUrl = "http://localhost:8080/api/v2/publicListing"
 
-def startEchoProtocol():
-
-
-    echoArgs = sys.argv[1].split(':')
-
-    action = echoArgs[1]
-
-
-    if action == "launch":
-        launchGame(echoArgs[2])
-    if action == "spec":
-       launchGameSpectator(echoArgs[2])
-    if action == "createpub":
-       postGameCreationPublic(echoArgs[2])
-    sys.exit()
-
-
-
-
-
-createGameUrl = "localhost:8080/api/v2/createGame"
-
-updateGameUrl = "localhost:8080/api/v2/updateGame"
 
 
 def getEchoJson():
@@ -36,37 +14,51 @@ def getEchoJson():
     return  response.json()
 
 
-def postGameCreationPublic(uniqueId):
-    data = getEchoJson()
-    
-    players = [player['name'] for team in data['teams'] for player in team['players']]
-    matchdetails = {
-    'sessionid' : data['sessionid'],
-    'client_name' : data['client_name'],
-    'game_clock_display' : data['game_clock_display'],
-    'game_status' : data['game_status'],
-    'players' : players,
-    'orange_points' : data['orange_points'],
-    'blue_points' : data['blue_points'],
-    'uniqueId' : uniqueId
-    }
-    currentMatchDetails = json.dumps(matchdetails)
-    print(currentMatchDetails)
+def postGameCreationPublic():
+    gameData = getEchoJson()
 
-    ##requests.post(url = createGameUrl, json  = )
-    ##startGameUpdateLoop(uniqueId)
+    if not gameData:
+        print("It seems either you dont have echo arena open or you're still in the lobby. Please join a private game")
+        sys.exit()
+
+    if not gameData['private_match']:
+        print("Live updates are not enabled for public games")
+        sys.exit()
+
+    response = requests.post(url = liveListingsUrl, json  = genEchoResponseBody())
+    print("Response to POST REQUEST: " + response.text)
+    if response.text == '"CONFLICT"':
+        print("Uh oh. Someone seems to still be running live updated. We don't need you... for now")
+        sys.exit()
+    startGameUpdateLoop()
 
     return
 
-def genEchoResponseBody(uniqueid):
-    gameData = getEchoJson()
-    jsonFormated = ""
+def genEchoResponseBody():
+    data = getEchoJson()
+
+    if 'players' in data['teams'][1]:
+        players = [player['name'] for team in data['teams'] for player in team['players']]
+    else:
+        players = [player['name'] for player in data['teams'][0]['players']]
+
+    matchdetails = {
+        'sessionid' : data['sessionid'],
+        'client_name' : data['client_name'],
+        'game_clock_display' : data['game_clock_display'],
+        'game_status' : data['game_status'],
+        'players' : players,
+        'orange_points' : data['orange_points'],
+        'blue_points' : data['blue_points']
+    }
+    return matchdetails
 
 
-    return jsonFormated
 
 
-def startGameUpdateLoop(uniqueId):
+def startGameUpdateLoop():
+    while True:
+        requests.put(url = liveListingsUrl, json  = genEchoResponseBody())
     return
 
 
@@ -126,5 +118,22 @@ def launchGameSpectator(lobbyid):
     time.sleep(2)
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid, "-spectatorstream"])
     return
+
+def startEchoProtocol():
+
+
+    echoArgs = sys.argv[1].split(':')
+
+    action = echoArgs[1]
+
+
+    if action == "launch":
+        launchGame(echoArgs[2])
+    if action == "spec":
+        launchGameSpectator(echoArgs[2])
+    if action == "createpub":
+        postGameCreationPublic()
+    sys.exit()
+
 
 startEchoProtocol()

@@ -2,6 +2,7 @@ package com.skinnycodebase.EchoUnit229.controllers;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePrivate;
+import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
 import com.skinnycodebase.EchoUnit229.models.EchoUpdateResponseBody;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import com.skinnycodebase.EchoUnit229.service.GuildConfigService;
@@ -25,7 +26,7 @@ public class EchoProtocolUpdateController {
     @Autowired
     private GuildConfigService guildConfigService;
 
-    @PostMapping(path = "/updateGame", consumes = "application/json")
+    @PutMapping(path = "/publicListing", consumes = "application/json", produces = "application/json")
     public HttpStatus updateGame(@RequestBody EchoUpdateResponseBody body){
         if(body.getSessionid() == null || body.getClient_name() == null)
             return HttpStatus.BAD_REQUEST;
@@ -33,12 +34,19 @@ public class EchoProtocolUpdateController {
         return HttpStatus.OK;
     }
 
-    @PostMapping(path = "/createPubGame", consumes = "application/json")
+    @PostMapping(path = "/publicListing", consumes = "application/json", produces = "application/json")
     public HttpStatus createPub(@RequestBody EchoUpdateResponseBody body){
+
+
         if(body.getSessionid() == null || body.getClient_name() == null)
             return HttpStatus.BAD_REQUEST;
 
-        FiggyUtility.registerAutoPublicGame(body);
+        EchoGamePublic game = echoGameService.getPublicSessionId(body.getSessionid());
+
+        if(game == null)
+            FiggyUtility.registerAutoPublicGame(body);
+        else if(game.isInUse())
+            return HttpStatus.CONFLICT;
         return HttpStatus.OK;
     }
 
