@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -56,7 +55,7 @@ public class PublicMessageIntake extends ListenerAdapter {
                     DelMyGame.run(event);
                     event.getMessage().delete().queue();
                     break;
-                case "SET":
+                    case "SET":
                     Set.run(event);
                     break;
                 case "HELP":
@@ -66,7 +65,7 @@ public class PublicMessageIntake extends ListenerAdapter {
                     logger.info("No command found for [ {} ]", command);
             }
 
-            logger.info("Command Execution by [{}] complete", event.getAuthor().getName());
+            logger.info("Command Execution [{}] by [{}] complete", command,event.getAuthor().getName());
         }
    }
 

@@ -126,12 +126,11 @@ def startEchoProtocol():
 
     action = echoArgs[1]
 
-
-    if action == "launch":
+    if action == "//launch":
         launchGame(echoArgs[2])
-    if action == "spec":
+    if action == "//spec":
         launchGameSpectator(echoArgs[2])
-    if action == "createpub":
+    if action == "//createpub":
         postGameCreationPublic()
     sys.exit()
 
