@@ -114,8 +114,8 @@ public class FiggyUtility  {
 
 
     public static String createLink(String ID) {
-
-        return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
+        return String.format("<echoprotocol://launch:{}>",ID);
+       // return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
 
     public static Optional<GuildConfig> getConfig(String guildId){

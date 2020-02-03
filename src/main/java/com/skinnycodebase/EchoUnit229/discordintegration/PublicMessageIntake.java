@@ -63,7 +63,7 @@ public class PublicMessageIntake extends ListenerAdapter {
                     logger.info("No command found for [ {} ]", command);
             }
 
-            logger.info("Command Execution by [{}] complete", event.getAuthor().getName());
+            logger.info("Command Execution [{}] by [{}] complete", command,event.getAuthor().getName());
         }
    }
 
