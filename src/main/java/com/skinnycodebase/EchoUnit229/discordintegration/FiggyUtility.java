@@ -2,6 +2,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 
 
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
+import com.skinnycodebase.EchoUnit229.EchoUnit229Application;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
 import com.skinnycodebase.EchoUnit229.models.EchoUpdateResponseBody;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
@@ -13,6 +14,7 @@ import net.dv8tion.jda.api.entities.Message;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,47 +23,45 @@ import java.awt.Color;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 
 @Component
-public class FiggyUtility  {
+public class FiggyUtility {
 
 
     private static EchoGameService echoGameService;
     private static GuildConfigService guildService;
-    private static List<Guild> guilds;
+    private static HashSet<String> possibleUniqueIds = new HashSet<>();
 
     @Autowired
-    public FiggyUtility(EchoGameService service, GuildConfigService guildConfigService){
-        if(FiggyUtility.echoGameService == null)
+    public FiggyUtility(EchoGameService service, GuildConfigService guildConfigService) {
+        if (FiggyUtility.echoGameService == null)
             FiggyUtility.echoGameService = service;
-        if(FiggyUtility.guildService == null)
+        if (FiggyUtility.guildService == null)
             FiggyUtility.guildService = guildConfigService;
     }
 
-    public static void setGuilds(List<Guild> guildsl){
-        guilds = guildsl;
-    }
-
-
 
     //Rewrite
-    public static void updatePublicGamesList(Guild guild){
+    public static void updateAllPublicGamesList(Guild guild) {
 
         //Get mention roles
         Optional<GuildConfig> configOptional = guildService.getById(guild.getId());
-        if(!configOptional.isPresent() || configOptional.get().getGuildId() == null )
+        if (!configOptional.isPresent() || configOptional.get().getGuildId() == null)
             return;
         GuildConfig config = configOptional.get();
 
         //listing channel
+        if (config.getPublicListingChannelId() == null)
+            return;
         TextChannel listingChanel = guild.getTextChannelById(config.getPublicListingChannelId());
 
+
         //@role mention if it exists
-        String mentionRole  = "";
+        String mentionRole = "";
         String mentionRoleId = config.getMentionRoleID();
-        if(mentionRoleId != null)
+        if (mentionRoleId != null)
             mentionRole = guild.getRoleById(mentionRoleId).getAsMention();
 
         //Delete messages within channel
@@ -86,17 +86,53 @@ public class FiggyUtility  {
 
             EmbedBuilder builder = new EmbedBuilder();
 
-            builder.setColor(new Color(0, 243, 14));
+            builder.setColor(new Color(243, 0, 17));
 
             //Generate link to join the game
-            builder.setTitle(guild.getMemberById(game.getPlayerID()).getUser().getName() + "'s game(click me)", createLink(game.getLobbyID()));
+            builder.setTitle(game.getPlayerName() + "'s game(click me)", createLink(game.getSessionid()));
 
             //Post time since it was created
             builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
 
-            listingChanel.sendMessage(builder.build()).queue();
+            RestAction<Message> restAction = listingChanel.sendMessage(builder.build());
+            Message msg = restAction.complete();
+            game.setMessageId(msg.getId());
+            echoGameService.savePublic(game);
         }
 
+    }
+
+
+    private static EmbedBuilder getPubBuilder(EchoGamePublic game, EchoUpdateResponseBody body) {
+        EmbedBuilder builder = new EmbedBuilder();
+
+        builder.setColor(new Color(19, 199, 243));
+
+        //Generate link to join the game
+        builder.setTitle(game.getPlayerName() + "'s game(click me)", createLink(game.getSessionid()));
+
+        //Post time since it was created
+        builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
+
+        builder.addField("Game Status", body.getGame_status(), true);
+
+        builder.addField("Game Clock" , body.getGame_clock_display(), true);
+
+        StringBuilder playerList = new StringBuilder();
+        playerList.append(" ");
+        int playerSize;
+        if (body.getPlayers() != null) {
+            playerSize = body.getPlayers().length;
+            for (String player : body.getPlayers())
+                playerList.append(player + "\n");
+        }
+            else
+                playerSize = 0;
+
+
+        builder.addField(String.format("Players [%s]",playerSize), playerList.toString(), true);
+
+        return builder;
     }
 
     public static boolean isValidID(String a) {
@@ -112,47 +148,71 @@ public class FiggyUtility  {
         return a.length() > 25 && count > 3;
     }
 
-
     public static String createLink(String ID) {
         return String.format("<echoprotocol://launch:{}>",ID);
        // return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
 
-    public static Optional<GuildConfig> getConfig(String guildId){
+    public static Optional<GuildConfig> getConfig(String guildId) {
         return guildService.getById(guildId);
     }
-    public static void saveConfig(GuildConfig config){
+
+    public static void saveConfig(GuildConfig config) {
         guildService.registerServer(config);
     }
+
     public static void registerPublicGame(String lobbyId, String userId, String guildId) {
         EchoGamePublic game = new EchoGamePublic();
-        game.setLobbyID(lobbyId);
+        game.setSessionid(lobbyId);
         game.setPlayerID(userId);
         game.setGuildId(guildId);
         game.setTimeGameCreated(LocalDateTime.now());
         game.setInUse(true);
         echoGameService.savePublic(game);
     }
-    public static boolean hasActiveGameInGuild(Guild guild,User user){
+
+    public static String testingid = "669565853880025107";
+
+    public static void registerAutoPublicGame(EchoUpdateResponseBody body) {
+        EchoGamePublic newGame = new EchoGamePublic();
+        //For now default to echo scrim organizer
+        newGame.setGuildId(testingid);
+        newGame.setInUse(true);
+        newGame.setPlayerName(body.getClient_name());
+        newGame.setSessionid(body.getSessionid());
+        newGame.setTimeGameCreated(LocalDateTime.now());
+        echoGameService.savePublic(newGame);
+        updateAllPublicGamesList(EchoUnit229Application.jda.getGuildById(testingid));
+    }
+
+    public static void updateAutoPublicGame(EchoUpdateResponseBody body) {
+        Guild guild = EchoUnit229Application.jda.getGuildById(testingid);
+        GuildConfig config = getConfig(guild.getId()).get();
+        EchoGamePublic pub = echoGameService.getPublicSessionId(body.getSessionid());
+        pub.setTimeLastLiveUpdate(LocalDateTime.now());
+        guild.getTextChannelById(config.getPublicListingChannelId()).editMessageById(
+                pub.getMessageId(),
+                getPubBuilder(pub, body).build()
+        ).queue();
+
+    }
+
+    public static boolean hasActiveGameInGuild(Guild guild, User user) {
         return echoGameService.hasActivePublicIn(guild, user);
     }
-    public static void updateFromRequest(EchoUpdateResponseBody body){
-            //EchoGamePublic pub = echoGameService.findBy
 
-            for(Guild g : guilds)
-                updatePublicGamesList(g);
-    }
-    public static void decommissionGame(Guild guild, User user){
+    public static void decommissionGame(Guild guild, User user) {
 
-        if(echoGameService.decommissionGame(guild.getId(), user.getId()))
+        if (echoGameService.decommissionGame(guild.getId(), user.getId()))
             privateMessage(user, "Game deleted");
         else
             privateMessage(user, "No active game found but I'm updating the listings anyways");
 
 
-        updatePublicGamesList(guild);
+        updateAllPublicGamesList(guild);
 
     }
+
     public static void privateMessage(User user, String message) {
         user.openPrivateChannel().queue((channel) ->
         {
@@ -169,5 +229,12 @@ public class FiggyUtility  {
                 FiggyUtility.createLink(lobbyId);
         privateMessage(user, msg);
 
+    }
+
+    public static boolean addUniqueId(String id) {
+        if (possibleUniqueIds.contains(id))
+            return false;
+        possibleUniqueIds.add(id);
+        return true;
     }
 }

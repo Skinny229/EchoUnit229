@@ -38,15 +38,15 @@ public class EchoUnit229Application {
     @Autowired
     FiggyUtility figgyUtility;
 
+    public static JDA jda = null;
+
     /*
     * Annotation makes sure spring is has started before running this method
     * */
     @EventListener(ApplicationReadyEvent.class)
     public void botStartup() {
-
         logger.info("Starting with address[{}] and hostname[{}]", InetAddress.getLoopbackAddress().getHostAddress(), InetAddress.getLoopbackAddress().getHostName());
         //Boot JDA (Discord bot)
-        JDA jda = null;
         try {
             jda = new JDABuilder(DeploymentSettings.BOT_AUTH_TOKEN).build();
         } catch (Exception e) {

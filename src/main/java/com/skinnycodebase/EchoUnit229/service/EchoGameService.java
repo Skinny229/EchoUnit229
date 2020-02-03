@@ -1,5 +1,6 @@
 package com.skinnycodebase.EchoUnit229.service;
 
+import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePrivate;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
 import com.skinnycodebase.EchoUnit229.service.repos.EchoGamePrivateRepository;
@@ -69,4 +70,11 @@ public class EchoGameService {
     }
 
 
+    public EchoGamePublic getPublicSessionId(String sessionid) {
+
+        for(EchoGamePublic pub : findAllActivePublic(FiggyUtility.testingid))
+            if(pub.getSessionid().equals(sessionid))
+                return pub;
+            return null;
+    }
 }

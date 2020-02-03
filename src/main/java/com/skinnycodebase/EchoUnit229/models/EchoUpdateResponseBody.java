@@ -1,33 +1,31 @@
 package com.skinnycodebase.EchoUnit229.models;
 
-import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
-import java.util.Optional;
-
+@JsonFormat
 public class EchoUpdateResponseBody {
 
-    private String uniqueId;
-
-    private String sessionId;
+    private String sessionid;
 
     private String client_name;
 
-    private String[] players;
+    private String game_clock_display;
 
-    public String getUniqueId() {
-        return uniqueId;
+    private String game_status;
+
+    private String players[];
+
+    private int orange_points;
+
+    private int blue_points;
+
+    public String getSessionid() {
+        return sessionid;
     }
 
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setSessionid(String sessionid) {
+        this.sessionid = sessionid;
     }
 
     public String getClient_name() {
@@ -38,20 +36,44 @@ public class EchoUpdateResponseBody {
         this.client_name = client_name;
     }
 
-    public String[] getPlayers() {
+    public String getGame_clock_display() {
+        return game_clock_display;
+    }
+
+    public void setGame_clock_display(String game_clock_display) {
+        this.game_clock_display = game_clock_display;
+    }
+
+    public String getGame_status() {
+        return game_status;
+    }
+
+    public void setGame_status(String game_status) {
+        this.game_status = game_status;
+    }
+
+   public String[] getPlayers() {
         return players;
     }
 
-    public void setPlayers(String[] players) {
+   public void setPlayers(String[] players) {
         this.players = players;
     }
 
-//    public EchoGamePublic topub(){
-//        Optional<EchoGamePublic> pubOp = FiggyUtility.get
-//        EchoGamePublic pub = ? new EchoGamePublic();
-//        pub.setGuildId("669565853880025107");
-//        pub.setId(uniqueId);
-//        pub.set
-//        return pub;
-//    }
+
+    public int getBlue_points() {
+        return blue_points;
+    }
+
+    public void setBlue_points(int blue_points) {
+        this.blue_points = blue_points;
+    }
+
+    public int getOrange_points() {
+        return orange_points;
+    }
+
+    public void setOrange_points(int orange_points) {
+        this.orange_points = orange_points;
+    }
 }

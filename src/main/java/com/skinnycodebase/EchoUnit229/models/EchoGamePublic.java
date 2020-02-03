@@ -1,13 +1,11 @@
 package com.skinnycodebase.EchoUnit229.models;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name="echo_game_public")
 public class EchoGamePublic {
 
     @Id
@@ -17,17 +15,21 @@ public class EchoGamePublic {
     //Discord player ID from the game generated
     private String playerID;
 
+    private String playerName;
+
     //Guild id generated from
     private String guildId;
 
+    private String messageId;
+
     //EchoVR lobbyID
-    private String lobbyID;
+    private String sessionid;
 
     private LocalDateTime timeGameCreated;
 
-    private int desiredPlayers;
-
     private boolean isInUse;
+
+    private LocalDateTime timeLastLiveUpdate;
 
 
     public long getId() {
@@ -46,12 +48,12 @@ public class EchoGamePublic {
         this.playerID = playerID;
     }
 
-    public String getLobbyID() {
-        return lobbyID;
+    public String getSessionid() {
+        return sessionid;
     }
 
-    public void setLobbyID(String lobbyID) {
-        this.lobbyID = lobbyID;
+    public void setSessionid(String lobbyID) {
+        this.sessionid = lobbyID;
     }
 
     public LocalDateTime getTimeGameCreated() {
@@ -70,19 +72,35 @@ public class EchoGamePublic {
         this.guildId = guildId;
     }
 
-    public int getDesiredPlayers() {
-        return desiredPlayers;
-    }
-
-    public void setDesiredPlayers(int desiredPlayers) {
-        this.desiredPlayers = desiredPlayers;
-    }
-
     public boolean isInUse() {
         return isInUse;
     }
 
     public void setInUse(boolean inUse) {
         isInUse = inUse;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public LocalDateTime getTimeLastLiveUpdate() {
+        return timeLastLiveUpdate;
+    }
+
+    public void setTimeLastLiveUpdate(LocalDateTime timeLastLiveUpdate) {
+        this.timeLastLiveUpdate = timeLastLiveUpdate;
     }
 }

@@ -30,7 +30,6 @@ public class Help  {
         else
             msg.append("```");
 
-
         channel.sendMessage(msg.toString()).queue();
 
     }

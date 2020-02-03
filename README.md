@@ -1,4 +1,13 @@
+
+
 # EchoUnit229
+
+
+### Authors
+* Rigo 'Skinny' L.
+* Kungg
+
+![](https://cdn.discordapp.com/attachments/662944114291245082/671778076178382908/EchoUnitProfile.png)
 
 
 
@@ -8,36 +17,35 @@
   * Expect to have this limitation fixed in a later update
 
 
-## Installation Instructions
-For you to able to open the game from the echovrprotocol.com links you need
-to register the protocol first
-* Download Zip Folder from the latest release
-* Extract Zip Folder to your desktop or somewhere safe
-* Run RegisterEchoProtocol.exe as ADMINISTRATOR(Right-click the exe)
-    * This will edit your registry for a custom URI Schema
-* That's it!
+## Installation of the repository
+
 
 ## Usage
 
+
+### Setup the Echo Protocol
+    
+      The web launcher will not work if these steps are not completed
+     1. Download the latest release
+     2. Unzip the release anywhere(but I highly recommend the desktop)
+     3. Run RegisterEchoProtocol.exe as ADIMINISTRATOR
+
 ### To create a public game
+Verify that you're in a private game
+##### Method 1
+* Visit [THIS](http://echovrprotocol.com/createPubGame) link and click on the "Initialize Live Public Game" button
+* This will create a public listing on the Echo Scrim Organizer lfg-bot text channel(ability to choose individual servers coming in a later update)
+
+##### Method 2
 * Double Click on GameInviter.exe when you're in a private echo arena game
      * this will fill your clipboard with a command for discord
-* Paste(CRTL-V) the command in any channel within Echo Scrim Organizer
-##### NEW FOR V0.2
-* TYPE THE GAME TYPE DESIRED (private OR public)
-* If you type private
-   * @MENTION all teams and users you wish to invite
-        * if more than 14 are mentioned it will cancel the game creation
-   * Press Enter. Game invites will be private messaged to each player
-* If you type public
-    * Just press enter
-    * Once the command is entered it will notify @BOIS that you have created a game!
-    * If you longer wish to display your game the command '-delmygame' will remove yours from the list!
+* Paste(CRTL-V) the command in any channel within Echo Scrim Organizer, AND type public
+* If you want to set up live stats for the public listings, follow method 1, it will not replace your current listing
 
-* To join a game make sure echo vr is closed!
-* To join game click link on the lfg-bot channel!
+### To create a "private" private game
+
 
 
 ## Alpha comments
 
-This is currently a big WIP project. Any feedback will be greatly appreciated. Expect bugs.
+This is currently a big WIP project. Any feedback will be greatly appreciated. Please report all bugs to skinny, thank you for your continued support.
