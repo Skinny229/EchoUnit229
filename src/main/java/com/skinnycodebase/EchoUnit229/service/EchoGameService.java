@@ -84,4 +84,8 @@ public class EchoGameService {
                 return game;
         return null;
     }
+
+    public EchoGamePublic getPublicGameById(long id){
+        return echoGamePublicRepository.findById(id).get();
+    }
 }

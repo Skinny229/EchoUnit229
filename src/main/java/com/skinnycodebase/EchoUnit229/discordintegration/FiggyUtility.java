@@ -4,8 +4,8 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
 import com.skinnycodebase.EchoUnit229.EchoUnit229Application;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
-import com.skinnycodebase.EchoUnit229.models.EchoLiveRequestBody;
-import com.skinnycodebase.EchoUnit229.models.EchoUpdateResponseBody;
+import com.skinnycodebase.EchoUnit229.models.responsebody.EchoLiveRequestBody;
+import com.skinnycodebase.EchoUnit229.models.responsebody.EchoUpdateResponseBody;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import com.skinnycodebase.EchoUnit229.service.GuildConfigService;
@@ -24,7 +24,9 @@ import java.awt.Color;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 
 @Component
 public class FiggyUtility {
@@ -61,11 +63,12 @@ public class FiggyUtility {
         String mentionRole = "";
         String mentionRoleId = config.getMentionRoleID();
         if (mentionRoleId != null)
-            mentionRole = guild.getRoleById(mentionRoleId).getAsMention();
+            mentionRole = Objects.requireNonNull(guild.getRoleById(mentionRoleId)).getAsMention();
 
         //Delete messages within channel
+        assert listingChanel != null;
         for (Message msg : listingChanel.getIterableHistory()) {
-            if (msg.getMember().getId().equals(DeploymentSettings.BOT_ID))
+            if (Objects.requireNonNull(msg.getMember()).getId().equals(DeploymentSettings.BOT_ID))
                 msg.delete().queue();
         }
 
@@ -207,11 +210,11 @@ public class FiggyUtility {
     }
 
 
-    public static void registerAutoPublicGame(EchoLiveRequestBody body) {
-        EchoGamePublic newGame = new EchoGamePublic();
+    public static void confirmAutoPublicGame(EchoLiveRequestBody body) {
+        EchoGamePublic newGame = echoGameService.getPublicGameByUserId(body.getDiscord_user_id());
         //For now default to echo scrim organizer
         newGame.setGuildId(body.getGuild_id());
-        newGame.setInUse(true);
+        newGame.setConnectedToLiveClient(true);
         newGame.setPlayerName(body.getClient_name());
         newGame.setSessionid(body.getSessionid());
         newGame.setTimeGameCreated(LocalDateTime.now());
@@ -266,14 +269,22 @@ public class FiggyUtility {
 
     }
 
+    static Random random = new Random();
 
     public static String createPublicGameConfirmationLink(Guild guild, User user){
         StringBuilder result = new StringBuilder();
-        long confirmationCode = echoGameService.getPublicGameByUserId(user.getId()).getId();
+        EchoGamePublic game = echoGameService.getPublicGameByUserId(user.getId());
+        long id = game.getId();
+        StringBuilder confirmationCode = new StringBuilder();
+        for(int i = 0; i < 5; i++)
+            confirmationCode.append(((char) random.nextInt(127) + 1));
+
+        game.setConfirmationCode(confirmationCode.toString());
         result.append("<echoprotocol://createpub:");
-        result.append(guild.getId() +":");
-        result.append(user.getId() + ":");
-        result.append(confirmationCode+ ":");
+        result.append(guild.getId()).append(":");
+        result.append(user.getId()).append(":");
+        result.append(id).append(":");
+        result.append(confirmationCode.toString()).append(":");
         result.append(">");
 
         return result.toString();

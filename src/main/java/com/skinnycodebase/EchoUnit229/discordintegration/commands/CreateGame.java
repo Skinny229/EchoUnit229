@@ -50,7 +50,7 @@ public class CreateGame {
             }
 
 
-            FiggyUtility.privateMessage(event.getAuthor(), "Please click the link below to confirm and display your game\n"
+            FiggyUtility.privateMessage(event.getAuthor(), "Please click the link below to confirm and display your game. Do NOT share this link\n"
                     + FiggyUtility.createPublicGameConfirmationLink(event.getGuild(),event.getAuthor()));
 
             //Notify player that the game has been created
