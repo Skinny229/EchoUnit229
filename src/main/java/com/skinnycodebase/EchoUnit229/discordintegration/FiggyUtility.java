@@ -4,6 +4,7 @@ package com.skinnycodebase.EchoUnit229.discordintegration;
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
 import com.skinnycodebase.EchoUnit229.EchoUnit229Application;
 import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
+import com.skinnycodebase.EchoUnit229.models.EchoLiveRequestBody;
 import com.skinnycodebase.EchoUnit229.models.EchoUpdateResponseBody;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
@@ -23,7 +24,6 @@ import java.awt.Color;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Optional;
 
 @Component
@@ -32,7 +32,6 @@ public class FiggyUtility {
 
     private static EchoGameService echoGameService;
     private static GuildConfigService guildService;
-    private static HashSet<String> possibleUniqueIds = new HashSet<>();
 
     @Autowired
     public FiggyUtility(EchoGameService service, GuildConfigService guildConfigService) {
@@ -65,10 +64,10 @@ public class FiggyUtility {
             mentionRole = guild.getRoleById(mentionRoleId).getAsMention();
 
         //Delete messages within channel
-        for (Message msg : listingChanel.getIterableHistory())
+        for (Message msg : listingChanel.getIterableHistory()) {
             if (msg.getMember().getId().equals(DeploymentSettings.BOT_ID))
                 msg.delete().queue();
-
+        }
 
         Iterable<EchoGamePublic> list = echoGameService.findAllActivePublic(guild.getId());
         ArrayList<EchoGamePublic> publicGames = new ArrayList<>();
@@ -89,7 +88,7 @@ public class FiggyUtility {
             builder.setColor(new Color(243, 0, 17));
 
             //Generate link to join the game
-            builder.setTitle(game.getPlayerName() + "'s game(click me)", createLink(game.getSessionid()));
+            builder.setTitle(game.getPlayerName() + "'s game(click me)", createLinkHttp(game.getSessionid()));
 
             //Post time since it was created
             builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
@@ -108,7 +107,7 @@ public class FiggyUtility {
 
         builder.setColor(new Color(0, 217, 243));
 
-        String link = body.getPlayers().length  >= 8 ? " " : createLink(game.getSessionid());
+        String link = body.getPlayers().length  >= 8 ? " " : createLinkHttp(game.getSessionid());
 
         //Generate link to join the game
         builder.setTitle(game.getPlayerName() + "'s game(click me)", link);
@@ -183,7 +182,7 @@ public class FiggyUtility {
         return a.length() > 25 && count > 3;
     }
 
-    public static String createLink(String ID) {
+    public static String createLinkHttp(String ID) {
        // return String.format("<echoprotocol://launch:%s>",ID);
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
@@ -196,44 +195,45 @@ public class FiggyUtility {
         guildService.registerServer(config);
     }
 
-    public static void registerPublicGame(String lobbyId, String userId, String guildId) {
+    public static void registerPublicGame( String userId, String guildId) {
         EchoGamePublic game = new EchoGamePublic();
-        game.setSessionid(lobbyId);
+        game.setSessionid("no");
         game.setPlayerID(userId);
         game.setGuildId(guildId);
         game.setTimeGameCreated(LocalDateTime.now());
         game.setInUse(true);
+
         echoGameService.savePublic(game);
     }
 
-    public static String testingid = "669565853880025107";
 
-    public static void registerAutoPublicGame(EchoUpdateResponseBody body) {
+    public static void registerAutoPublicGame(EchoLiveRequestBody body) {
         EchoGamePublic newGame = new EchoGamePublic();
         //For now default to echo scrim organizer
-        newGame.setGuildId(testingid);
+        newGame.setGuildId(body.getGuild_id());
         newGame.setInUse(true);
         newGame.setPlayerName(body.getClient_name());
         newGame.setSessionid(body.getSessionid());
         newGame.setTimeGameCreated(LocalDateTime.now());
         echoGameService.savePublic(newGame);
-        updateAllPublicGamesList(EchoUnit229Application.jda.getGuildById(testingid));
+        updateAllPublicGamesList(EchoUnit229Application.jda.getGuildById(body.getGuild_id()));
     }
 
     public static void updateAutoPublicGame(EchoUpdateResponseBody body) {
-        Guild guild = EchoUnit229Application.jda.getGuildById(testingid);
+        EchoGamePublic pub = echoGameService.getPublicGameBySessionId(body.getSessionid());
+        Guild guild = EchoUnit229Application.jda.getGuildById(pub.getGuildId());
         GuildConfig config = getConfig(guild.getId()).get();
-        EchoGamePublic pub = echoGameService.getPublicSessionId(body.getSessionid());
         pub.setTimeLastLiveUpdate(LocalDateTime.now());
         guild.getTextChannelById(config.getPublicListingChannelId()).editMessageById(
                 pub.getMessageId(),
                 getPubBuilder(pub, body).build()
         ).queue();
+        echoGameService.savePublic(pub);
 
     }
 
     public static boolean hasActiveGameInGuild(Guild guild, User user) {
-        return echoGameService.hasActivePublicIn(guild, user);
+        return echoGameService.hasActivePublicIn(guild.getId(), user.getId());
     }
 
     public static void decommissionGame(Guild guild, User user) {
@@ -261,15 +261,22 @@ public class FiggyUtility {
     public static void privateMessageOnPrivateInvite(User user, String lobbyId) {
 
         String msg = "You have been invited to a Scrim/Private game! Please click on the following link to join\n" +
-                FiggyUtility.createLink(lobbyId);
+                FiggyUtility.createLinkHttp(lobbyId);
         privateMessage(user, msg);
 
     }
 
-    public static boolean addUniqueId(String id) {
-        if (possibleUniqueIds.contains(id))
-            return false;
-        possibleUniqueIds.add(id);
-        return true;
+
+    public static String createPublicGameConfirmationLink(Guild guild, User user){
+        StringBuilder result = new StringBuilder();
+        long confirmationCode = echoGameService.getPublicGameByUserId(user.getId()).getId();
+        result.append("<echoprotocol://createpub:");
+        result.append(guild.getId() +":");
+        result.append(user.getId() + ":");
+        result.append(confirmationCode+ ":");
+        result.append(">");
+
+        return result.toString();
     }
+
 }

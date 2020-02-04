@@ -22,28 +22,14 @@ public class CreateGame {
 
         ArrayList<String> cmdbreakdown = new ArrayList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 
-        if (cmdbreakdown.size() < 3) {
-            logger.warn("No game type detected!");
-            FiggyUtility.privateMessage(event.getAuthor(), "Game Creation FAILED. Did you forget to input game type by any chance?");
-            return;
-        }
 
-        String type = cmdbreakdown.get(2).toLowerCase();
+        String type = cmdbreakdown.get(1).toLowerCase();
 
-        String lobbyID = cmdbreakdown.get(1);
 
         logger.info("Expected game type [{}]", type);
-        logger.info("Expected sessionID[{}]", lobbyID);
 
         StringBuilder fullMessage = new StringBuilder();
 
-        if (!FiggyUtility.isValidID(lobbyID)) {
-            logger.warn("Invalid ID. Cancelling....");
-            FiggyUtility.privateMessage(event.getAuthor(), "It seems like this is an invalid 'sessionid' please try again.\n" +
-                    "Is it possible you are still using V0.1 of the Game inviter?");
-
-            return;
-        }
 
 
         if (type.equals("public")) {
@@ -56,19 +42,20 @@ public class CreateGame {
 
 
             if (!FiggyUtility.hasActiveGameInGuild(event.getGuild(), event.getAuthor()))
-                FiggyUtility.registerPublicGame(lobbyID, event.getAuthor().getId(), event.getGuild().getId());
+
+                FiggyUtility.registerPublicGame(event.getAuthor().getId(), event.getGuild().getId());
             else {
                 FiggyUtility.privateMessage(event.getAuthor(), "It seems you have an active game, use -delmygame on the current guild to delete it");
                 return;
             }
 
-            //Display all new and current running games to the lfg-bot channel
-            FiggyUtility.updateAllPublicGamesList(event.getGuild());
 
+            FiggyUtility.privateMessage(event.getAuthor(), "Please click the link below to confirm and display your game\n"
+                    + FiggyUtility.createPublicGameConfirmationLink(event.getGuild(),event.getAuthor()));
 
             //Notify player that the game has been created
             String plyMention = event.getAuthor().getAsMention();
-            event.getMessage().getChannel().sendMessage("Game has successfully been created " + plyMention).queue();
+                event.getMessage().getChannel().sendMessage("Game confirmation code has been sent to you " + plyMention).queue();
 
 
         } else if (type.equals("private")) {
@@ -99,12 +86,12 @@ public class CreateGame {
             for (User user : toBeInvited) {
                 //If the user is the same as the creator send separate msg
                 if (user.getId().equals(event.getAuthor().getId())) {
-                    FiggyUtility.privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...\n" + FiggyUtility.createLink(lobbyID));
+                   // FiggyUtility.privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...\n" + FiggyUtility.createLinkHttp(lobbyID));
                     continue;
                 }
 
                 logger.info("Inviting user [{}] to {} 's Game", user.getName(), event.getAuthor().getName());
-                FiggyUtility.privateMessageOnPrivateInvite(user, lobbyID);
+                //FiggyUtility.privateMessageOnPrivateInvite(user, lobbyID);
             }
 
 

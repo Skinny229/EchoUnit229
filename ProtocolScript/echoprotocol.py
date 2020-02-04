@@ -14,7 +14,7 @@ def getEchoJson():
     return  response.json()
 
 
-def postGameCreationPublic():
+def startPublicGameCreationProcess(echoArgs):
     gameData = getEchoJson()
 
     if not gameData:
@@ -25,7 +25,10 @@ def postGameCreationPublic():
      ##   print("Live updates are not enabled for public games")
        ## sys.exit()
 
-    response = requests.post(url = liveListingsUrl, json  = genEchoResponseBody())
+
+
+    response = requests.post(url = liveListingsUrl, json  = genEchoLiveRequestJson(echoArgs, gameData))
+
     print("Response to POST REQUEST: " + response.text)
     if response.text == '"CONFLICT"':
         print("Uh oh. Someone seems to still be running live updated. We don't need you... for now")
@@ -33,6 +36,21 @@ def postGameCreationPublic():
     startGameUpdateLoop()
 
     return
+
+def genEchoLiveRequestJson(echoArgs, gameData):
+
+    print(echoArgs)
+    liveRequestDetails = {
+
+        'confirmation_code' : echoArgs[4],
+        'discord_user_id' : echoArgs[3],
+        'guild_id' : echoArgs[2],
+        'sessionid' : gameData['sessionid'],
+        'client_name' : gameData['client_name']
+
+    }
+
+    return liveRequestDetails
 
 def genEchoResponseBody():
     data = getEchoJson()
@@ -130,8 +148,8 @@ def startEchoProtocol():
         launchGame(echoArgs[2])
     if action == "//spec":
         launchGameSpectator(echoArgs[2])
-    if action == "//createpub":
-        postGameCreationPublic()
+    if action == "//createpub/":
+        startPublicGameCreationProcess(echoArgs)
     sys.exit()
 
 

@@ -40,9 +40,9 @@ public class EchoGameService {
 
     }
 
-    public boolean hasActivePublicIn(Guild guild, User user){
-        for(EchoGamePublic pub : findAllActivePublic(guild.getId()))
-            if(pub.getPlayerID().equals(user.getId()))
+    public boolean hasActivePublicIn(String guildid, String userid){
+        for(EchoGamePublic pub : findAllActivePublic(guildid))
+            if(pub.getPlayerID().equals(userid))
                 return true;
         return false;
     }
@@ -64,17 +64,24 @@ public class EchoGameService {
     public ArrayList<EchoGamePrivate> getJoinablePrivateGames(String playerID) {
         ArrayList<EchoGamePrivate> result = new ArrayList<>();
         for (EchoGamePrivate game : echoGamePrivateRepository.findAll())
-            if (game.getUserId() == playerID)
+            if (game.getUserId().equals(playerID))
                 result.add(game);
         return result;
     }
 
 
-    public EchoGamePublic getPublicSessionId(String sessionid) {
+    public EchoGamePublic getPublicGameBySessionId(String sessionid) {
 
-        for(EchoGamePublic pub : findAllActivePublic(FiggyUtility.testingid))
+        for(EchoGamePublic pub : echoGamePublicRepository.findAll())
             if(pub.getSessionid().equals(sessionid))
                 return pub;
             return null;
+    }
+
+    public EchoGamePublic getPublicGameByUserId(String id) {
+        for(EchoGamePublic game : echoGamePublicRepository.findAll())
+            if(game.getPlayerID().equals(id) && game.isInUse())
+                return game;
+        return null;
     }
 }

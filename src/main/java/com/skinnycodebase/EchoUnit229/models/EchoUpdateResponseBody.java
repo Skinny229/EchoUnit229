@@ -8,7 +8,7 @@ public class EchoUpdateResponseBody {
 
     private String sessionid;
 
-    private String guildId;
+    private String discordUserId;
 
     private String client_name;
 
@@ -77,5 +77,13 @@ public class EchoUpdateResponseBody {
 
     public void setOrange_points(int orange_points) {
         this.orange_points = orange_points;
+    }
+
+    public String getDiscordUserId() {
+        return discordUserId;
+    }
+
+    public void setDiscordUserId(String discordUserId) {
+        this.discordUserId = discordUserId;
     }
 }

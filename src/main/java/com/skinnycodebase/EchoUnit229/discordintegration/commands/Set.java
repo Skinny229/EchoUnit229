@@ -17,7 +17,7 @@ public class Set {
         User user = event.getAuthor();
 
 
-        if(! (event.getGuild().getOwner().getUser() == user)) {
+        if(!(event.getGuild().getOwner().getUser().equals(user))) {
             FiggyUtility.privateMessage(user, "It seems you cannot execute the command as you dont have permissions");
             return;
         }
