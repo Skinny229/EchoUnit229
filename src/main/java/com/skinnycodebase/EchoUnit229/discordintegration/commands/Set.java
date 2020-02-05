@@ -1,5 +1,6 @@
 package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 
+import com.skinnycodebase.EchoUnit229.DeploymentSettings;
 import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
 import net.dv8tion.jda.api.entities.Guild;
@@ -17,7 +18,7 @@ public class Set {
         User user = event.getAuthor();
 
 
-        if(!(event.getGuild().getOwner().getUser().equals(user))) {
+        if( !event.getAuthor().getId().equals(DeploymentSettings.DEV_ID) && !(event.getGuild().getOwner().getUser().equals(user))) {
             FiggyUtility.privateMessage(user, "It seems you cannot execute the command as you dont have permissions");
             return;
         }
