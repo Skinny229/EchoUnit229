@@ -28,8 +28,6 @@ public class CreateGame {
 
         logger.info("Expected game type [{}]", type);
 
-        StringBuilder fullMessage = new StringBuilder();
-
 
 
         if (type.equals("public")) {
@@ -59,40 +57,40 @@ public class CreateGame {
 
 
         } else if (type.equals("private")) {
+            event.getChannel().sendMessage("No Boomer").queue();
+//            //Add mentioned players to the invite list
+//            HashSet<User> toBeInvited = new HashSet<>(event.getMessage().getMentionedUsers());
+//
+//            //Add mentioned roles
+//            List<Role> rolesToInvite = event.getMessage().getMentionedRoles();
+//            if (rolesToInvite.size() != 0)
+//                for (Member member : event.getGuild().getMembersWithRoles(rolesToInvite))
+//                    toBeInvited.add(member.getUser());
+//
+//
+//            //Double check the bimbo actually invited someone
+//            if (toBeInvited.isEmpty()) {
+//                logger.warn("No players have been invited to the private. Canceling Creation");
+//                FiggyUtility.privateMessage(event.getAuthor(), "You didn't invite anyone! Canceling....");
+//                return;
+//            }
+//
+//            if (toBeInvited.size() > 14) {
+//                FiggyUtility.privateMessage(event.getAuthor(), "wowowow too many players.. Canceling...");
+//                return;
+//            }
+//
+//            //Private Message all new players they have been invited to a new game
+//            for (User user : toBeInvited) {
+//                //If the user is the same as the creator send separate msg
+//                if (user.getId().equals(event.getAuthor().getId())) {
+//                   // FiggyUtility.privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...\n" + FiggyUtility.createLinkHttp(lobbyID));
+//                    continue;
+//                }
+//
+//                logger.info("Inviting user [{}] to {} 's Game", user.getName(), event.getAuthor().getName());
+//                //FiggyUtility.privateMessageOnPrivateInvite(user, lobbyID);
 
-            //Add mentioned players to the invite list
-            HashSet<User> toBeInvited = new HashSet<>(event.getMessage().getMentionedUsers());
-
-            //Add mentioned roles
-            List<Role> rolesToInvite = event.getMessage().getMentionedRoles();
-            if (rolesToInvite.size() != 0)
-                for (Member member : event.getGuild().getMembersWithRoles(rolesToInvite))
-                    toBeInvited.add(member.getUser());
-
-
-            //Double check the bimbo actually invited someone
-            if (toBeInvited.isEmpty()) {
-                logger.warn("No players have been invited to the private. Canceling Creation");
-                FiggyUtility.privateMessage(event.getAuthor(), "You didn't invite anyone! Canceling....");
-                return;
-            }
-
-            if (toBeInvited.size() > 14) {
-                FiggyUtility.privateMessage(event.getAuthor(), "wowowow too many players.. Canceling...");
-                return;
-            }
-
-            //Private Message all new players they have been invited to a new game
-            for (User user : toBeInvited) {
-                //If the user is the same as the creator send separate msg
-                if (user.getId().equals(event.getAuthor().getId())) {
-                   // FiggyUtility.privateMessage(user, "Game creation SUCCESSFUL. Invites are being sent...\n" + FiggyUtility.createLinkHttp(lobbyID));
-                    continue;
-                }
-
-                logger.info("Inviting user [{}] to {} 's Game", user.getName(), event.getAuthor().getName());
-                //FiggyUtility.privateMessageOnPrivateInvite(user, lobbyID);
-            }
 
 
         } else {

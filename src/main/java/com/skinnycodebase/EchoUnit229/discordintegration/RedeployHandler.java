@@ -36,7 +36,7 @@ public class RedeployHandler extends ListenerAdapter {
         Optional<GuildConfig> configOptional = FiggyUtility.getConfig(event.getGuild().getId());
 
         //If set up doesnt exists run inital setup
-        if(!configOptional.isPresent()){
+        if(!configOptional.isPresent() && !event.getGuild().getId().equals(DeploymentSettings.ESO_GUILD_ID)){
             logger.info("Setting up new server with name[{}]",event.getGuild().getName());
             User serverOwner = event.getGuild().getOwner().getUser();
             GuildConfig newConfig = new GuildConfig();
@@ -49,6 +49,12 @@ public class RedeployHandler extends ListenerAdapter {
                             "where `[id]` is the text channel id\n" +
                             "This will automatically enable your public listings, which I recommend only im able to type in.");
             return;
+        }else if(event.getGuild().getId().equals(DeploymentSettings.ESO_GUILD_ID) && !configOptional.isPresent()){
+            GuildConfig config = new GuildConfig();
+            config.setGuildId(event.getGuild().getId());
+            config.setMentionRoleID("669569226427858954");
+            config.setLastGameCount(0);
+            FiggyUtility.saveConfig(config);
         }
         FiggyUtility.updateAllPublicGamesList(event.getGuild());
 

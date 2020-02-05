@@ -215,6 +215,7 @@ public class FiggyUtility {
         game.setGuildId(guildId);
         game.setTimeGameCreated(LocalDateTime.now());
         game.setInUse(true);
+        game.setConnectedToLiveClient(false);
         echoGameService.savePublic(game);
     }
 

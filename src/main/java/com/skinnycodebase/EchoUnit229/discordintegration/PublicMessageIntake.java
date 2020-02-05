@@ -49,14 +49,13 @@ public class PublicMessageIntake extends ListenerAdapter {
             switch(command){
                 case "CREATEGAME":
                     CreateGame.run(event);
-                    event.getMessage().delete().queue();
                     break;
                 case "DELMYGAME":
                     DelMyGame.run(event);
-                    event.getMessage().delete().queue();
                     break;
                     case "SET":
                     Set.run(event);
+                    event.getMessage().delete().queue();
                     break;
                 case "HELP":
                     Help.run(event);
