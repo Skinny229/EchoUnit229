@@ -26,7 +26,7 @@
 		* `psutil`
 		* `winreg`
 		* `pyinstaller` for building the exe -- `pyinstaller -F echoprotocol.py` will place the echoprotocol under the dist folder
-* Install local mysql server and assign enviroment variable SQL_URL point it to the local server
+* Install local mysql server and assign enviroment variable `SQL_URL` point it to the local server
 * Assign `AUTH_TOKEN` to the discord bot secret and `SQL_PASS` to the root mysql server password
 * Build project with maven with command `mvn clean install -DskipTests`
 
@@ -36,10 +36,10 @@
 
 ### Setup the Echo Protocol
     
-     The web launcher will not work if these steps are not completed
+     The launcher will not work if these steps are not completed
      1. Download the latest release
      2. Unzip the release anywhere(but I highly recommend the desktop)
-     3. Run RegisterEchoProtocol.exe as ADIMINISTRATOR
+     3. Run RegisterEchoProtocol.exe as ADMINISTRATOR
 
 ### To create a public game
 Verify that you're in a private game
