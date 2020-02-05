@@ -107,13 +107,14 @@ public class FiggyUtility {
 
     private static EmbedBuilder getPubBuilder(EchoGamePublic game, EchoUpdateResponseBody body) {
         EmbedBuilder builder = new EmbedBuilder();
+        int maxPlayers = 6;
 
         builder.setColor(new Color(0, 217, 243));
 
-        String link = body.getPlayers().length  >= 8 ? " " : createLinkHttp(game.getSessionid());
+        String link = body.getPlayers().length  >= maxPlayers ? " " : createLinkHttp(game.getSessionid());
 
         //Generate link to join the game
-        builder.setTitle(game.getPlayerName() + "'s game(click me)", link);
+        builder.setTitle(game.getPlayerName() + "'s game(if it's blue click me for the website version)", link);
 
         //Post time since it was created
         builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
@@ -124,7 +125,7 @@ public class FiggyUtility {
                 status = "Waiting to start....";
                 break;
             case "playing":
-                status = "Yeeting Disk back and forth";
+                status = "Playing";
                 break;
             case "score":
                 status  = "Gooooooaaaaal";
@@ -133,7 +134,7 @@ public class FiggyUtility {
                 status = "In the tubes, ready to launch!";
                 break;
             case "round_over":
-                status = "Game completed";
+                status = "Round completed";
                 break;
             case "post_match":
                 status = "Set Completed";
@@ -169,6 +170,12 @@ public class FiggyUtility {
 
         builder.addField(String.format("Players [%s]",playerSize), playerList.toString(), false);
 
+
+        String directLink = playerSize >= maxPlayers ? "Full Game" : createLinkEchoProtocol(body.getSessionid());
+
+
+        builder.addField("Direct Join Link", directLink,false);
+
         return builder;
     }
 
@@ -186,8 +193,11 @@ public class FiggyUtility {
     }
 
     public static String createLinkHttp(String ID) {
-       // return String.format("<echoprotocol://launch:%s>",ID);
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
+    }
+
+    public static String createLinkEchoProtocol(String sessionid){
+        return String.format("<echoprotocol://launch:%s>", sessionid);
     }
 
     public static Optional<GuildConfig> getConfig(String guildId) {
@@ -205,7 +215,6 @@ public class FiggyUtility {
         game.setGuildId(guildId);
         game.setTimeGameCreated(LocalDateTime.now());
         game.setInUse(true);
-
         echoGameService.savePublic(game);
     }
 
@@ -286,7 +295,7 @@ public class FiggyUtility {
         result.append(id).append(":");
         result.append(confirmationCode.toString()).append(":");
         result.append(">");
-
+        echoGameService.savePublic(game);
         return result.toString();
     }
 

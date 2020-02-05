@@ -34,8 +34,8 @@ public class EchoProtocolUpdateController {
             return HttpStatus.BAD_REQUEST;
 
         // If the game has already been decommissioned
-        if(!echoGameService.getPublicGameBySessionId(body.getSessionid()).isInUse()) {
-            EchoGamePublic game  = echoGameService.getPublicGameBySessionId(body.getSessionid());
+       EchoGamePublic game = echoGameService.getPublicGameBySessionId(body.getSessionid());
+        if(game != null && !game.isInUse()) {
             echoGameService.decommissionGame(game.getGuildId(),game.getPlayerID());
             return HttpStatus.MOVED_PERMANENTLY;
 

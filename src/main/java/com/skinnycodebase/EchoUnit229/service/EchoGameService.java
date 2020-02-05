@@ -88,4 +88,12 @@ public class EchoGameService {
     public EchoGamePublic getPublicGameById(long id){
         return echoGamePublicRepository.findById(id).get();
     }
+
+    public Iterable<EchoGamePublic> getAllPublicGames(){
+        return echoGamePublicRepository.findAll();
+    }
+
+    public void decommissionGame(EchoGamePublic game){
+        decommissionGame(game.getGuildId(),game.getPlayerID());
+    }
 }

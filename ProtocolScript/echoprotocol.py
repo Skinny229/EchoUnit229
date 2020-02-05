@@ -1,8 +1,9 @@
 import os, string, sys, subprocess, psutil, time, requests, json
 
 
-liveListingsUrl = "http://localhost:8080/api/v2/publicListing"
-closeLiveListUrl = "http://localhost:8080/api/v2/closePublicListing"
+liveListingsUrl = "http://echovrprotocol.com/api/v2/publicListing"
+closeLiveListUrl = "http://echovrprotocol.com/api/v2/closePublicListing"
+privateConfirmUrl = "http://echovrprotocol.com/api/v2/confirmPrivateGame"
 
 confirmCode = -1
 id = 0
@@ -13,9 +14,12 @@ maxFailedGetEchoJsonUpdateLoop = 3
 def getEchoJson():
 
     URL = "http://localhost/session"
-
-    response = requests.get(url = URL)
-
+    try:
+        response = requests.get(url = URL)
+    except:
+        print("ConnectionError")
+        time.sleep(10)
+        return ""
     return response.json()
 
 
@@ -95,7 +99,7 @@ def startGameUpdateLoop():
                 print("Max fail rate reached. exiting....")
                 x = {
                     'id': id,
-                    'confirm_code': confirmCode
+                    'confirmation_code': confirmCode
                 }
                 requests.post(URL = closeLiveListUrl,  json = x)
                 timer.sleep(5)
@@ -167,6 +171,22 @@ def launchGame(lobbyid):
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid])
     return
 
+
+def confirmPrivateGame(echoArgs):
+
+    gameData = getEchoJson()
+
+    privateConfirmObject = {
+        'sessionid': gameData['sessionid'],
+        'discord_user_id': echoArgs[2],
+        'confirmation_code': echoArgs[4],
+        'id': echoArgs[3]
+    }
+
+    requests.post(url = privateConfirmUrl , json = privateConfirmObject)
+        
+    return
+
 def launchGameSpectator(lobbyid):
     restartEchoIfRunning()
     time.sleep(2)
@@ -178,18 +198,20 @@ def startEchoProtocol():
 
     print("\n" +" ######   ####   #    #   ####\n" +" #       #    #  #    #  #    #\n" + " #####   #       ######  #    #\n" +" #       #       #    #  #    #\n" +" #       #    #  #    #  #    #\n" +" ######   ####   #    #   ####\n" +"\n")
     print("\n" + " #####   #####    ####    #####   ####    ####    ####   #\n" +  " #    #  #    #  #    #     #    #    #  #    #  #    #  #\n" +  " #    #  #    #  #    #     #    #    #  #       #    #  #\n" +    " #####   #####   #    #     #    #    #  #       #    #  #\n" +     " #       #   #   #    #     #    #    #  #    #  #    #  #\n" +   " #       #    #   ####      #     ####    ####    ####   ######\n" +"\n")
-    print("Version 1.0 Coded by Skinny and Kungg")
+    print("Version 1.0 Coded by Skinny assisted by Kungg")
 
     echoArgs = sys.argv[1].split(':')
 
     action = echoArgs[1]
 
-    if action == "//launch":
+    if action == "//launch/":
         launchGame(echoArgs[2])
-    if action == "//spec":
+    if action == "//spec/":
         launchGameSpectator(echoArgs[2])
     if action == "//createpub/":
         startPublicGameCreationProcess(echoArgs)
+    if action == "//confirmPrivate/":
+        confirmPrivateGame(echoArgs)
     sys.exit()
 
 

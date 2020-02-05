@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['echoprotocol.py'],
-             pathex=['C:\\Dev\\EchoUnit229\\ProtocolScript'],
+             pathex=['C:\\dev\\EchoUnit229\\ProtocolScript'],
              binaries=[],
              datas=[],
              hiddenimports=[],
