@@ -49,10 +49,11 @@ public class RedeployHandler extends ListenerAdapter {
                             "where `[id]` is the text channel id\n" +
                             "This will automatically enable your public listings, which I recommend only im able to type in.");
             return;
-        }else if(event.getGuild().getId().equals(DeploymentSettings.ESO_GUILD_ID) && !configOptional.isPresent()){
+        }else if(event.getGuild().getId().equals(DeploymentSettings.ESO_GUILD_ID)){
             GuildConfig config = new GuildConfig();
             config.setGuildId(event.getGuild().getId());
-            config.setMentionRoleID("669569226427858954");
+            config.setPublicListingChannelId("661307549496115232");
+            config.setMentionRoleID("645047793500815387");
             config.setLastGameCount(0);
             FiggyUtility.saveConfig(config);
         }

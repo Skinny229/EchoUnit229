@@ -63,7 +63,7 @@ public class FiggyUtility {
         String mentionRole = "";
         String mentionRoleId = config.getMentionRoleID();
         if (mentionRoleId != null)
-            mentionRole = Objects.requireNonNull(guild.getRoleById(mentionRoleId)).getAsMention();
+            mentionRole = guild.getRoleById(mentionRoleId).getAsMention();
 
         //Delete messages within channel
         assert listingChanel != null;
@@ -251,13 +251,16 @@ public class FiggyUtility {
 
     public static void decommissionGame(Guild guild, User user) {
 
-        if (echoGameService.decommissionGame(guild.getId(), user.getId()))
+        if (echoGameService.decommissionGame(guild.getId(), user.getId())) {
+            FiggyUtility.updateAllPublicGamesList(guild);
             privateMessage(user, "Game deleted");
+
+        }
         else
-            privateMessage(user, "No active game found but I'm updating the listings anyways");
+            privateMessage(user, "No active game found");
 
 
-        updateAllPublicGamesList(guild);
+
 
     }
 
