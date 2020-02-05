@@ -5,11 +5,15 @@ import com.skinnycodebase.EchoUnit229.models.GuildConfig;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 
 public class RedeployHandler extends ListenerAdapter {
+
+    public static final Logger logger = LoggerFactory.getLogger(RedeployHandler.class);
 
 
     /**
@@ -33,6 +37,7 @@ public class RedeployHandler extends ListenerAdapter {
 
         //If set up doesnt exists run inital setup
         if(!configOptional.isPresent()){
+            logger.info("Setting up new server with name[{}]",event.getGuild().getName());
             User serverOwner = event.getGuild().getOwner().getUser();
             GuildConfig newConfig = new GuildConfig();
             newConfig.setGuildId(event.getGuild().getId());

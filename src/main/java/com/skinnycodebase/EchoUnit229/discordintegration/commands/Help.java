@@ -17,8 +17,8 @@ public class Help  {
         StringBuilder msg = new StringBuilder();
         msg.append("```markdown\n#Commands \n" +
                    "* -help \n\t* Available in PM format as well\n\n");
-        msg.append("* -creategame [sessionid] [private/public] \n\t* Create public game for everyone to join\n" +
-                    "\t* This command is generated for you within the GameInviter.exe, all you need to type is public or private"+
+        msg.append("* -creategame [private/public] \n\t* Create public game for everyone to join\n" +
+                    "\t* This bot will PM you a confirmation code, make sure you're in a private game!"+
                     "\n\t* Visit http://echovrprotocol.com to use live updates public game instead\n\n");
         msg.append("* -delmygame \n\t * deletes active public game in the Guild's public listings\n\n");
         msg.append("# TO JOIN GAMES\n\n");

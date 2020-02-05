@@ -17,8 +17,6 @@ def getEchoJson():
     try:
         response = requests.get(url = URL)
     except:
-        print("ConnectionError")
-        time.sleep(10)
         return ""
     return response.json()
 
@@ -28,11 +26,12 @@ def startPublicGameCreationProcess(echoArgs):
 
     if not gameData:
         print("It seems either you dont have echo arena open or you're still in the lobby. Please join a private game")
+        time.sleep(10)
         sys.exit()
 
-   ## if not gameData['private_match']:
-     ##   print("Live updates are not enabled for public games")
-       ## sys.exit()
+    if not gameData['private_match']:
+       print("Live updates are not enabled for public games")
+       sys.exit()
 
 
     print("SENDING REQUEST TO ENABLE LIVE UPDATES PLEASE WAIT.....")
@@ -40,11 +39,11 @@ def startPublicGameCreationProcess(echoArgs):
     print("Response to POST REQUEST: " + response.text)
     if response.text == '"ALREADY REPORTED"':
         print("Uh oh. Someone seems to still be running live updated. We don't need you... for now")
-        time.sleep(5)
+        time.sleep(10)
         sys.exit()
     if response.text == '"CONFLICT"':
         print("Hmmm it seems like this request is expired. Use -creategame public")
-        time.sleep(5)
+        time.sleep(10)
         sys.exit()
     print("Entering update loop. I'll keep you posted if anything changes")
     startGameUpdateLoop()
@@ -69,6 +68,9 @@ def genEchoLiveRequestJson(echoArgs, gameData):
 
 def genEchoResponseBody():
     data = getEchoJson()
+
+    if not data:
+        return ""
 
     if 'players' in data['teams'][1]:
         players = [player['name'] for team in data['teams'] for player in team['players']]
@@ -102,7 +104,7 @@ def startGameUpdateLoop():
                     'confirmation_code': confirmCode
                 }
                 requests.post(URL = closeLiveListUrl,  json = x)
-                timer.sleep(5)
+                time.sleep(10)
                 sys.exit()
 
 
