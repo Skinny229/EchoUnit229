@@ -107,7 +107,7 @@ public class FiggyUtility {
 
     private static EmbedBuilder getPubBuilder(EchoGamePublic game, EchoUpdateResponseBody body) {
         EmbedBuilder builder = new EmbedBuilder();
-        int maxPlayers = 6;
+        int maxPlayers = 8;
 
         builder.setColor(new Color(0, 217, 243));
 
