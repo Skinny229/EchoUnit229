@@ -15,7 +15,6 @@ public class HomeController {
     @GetMapping(value = "/")
     @ResponseStatus(HttpStatus.OK)
     public String getTestingHome() {
-
         return "home.html";
     }
 

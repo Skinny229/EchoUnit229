@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <link th:href="@{/css/home.css}" rel="stylesheet"/>
+    <title>EchoVR Protocol</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EchoVR Protocol</title>
+    <link th:href="@{/css/joinGame.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="flex-container">
     <div class="row">
         <div class="flex-item">
             <div class="header">
-                <h1>Click the button to join the game!</h1>
+                <h1>Game Generated</h1>
+                <h2>Please verify echoprotocol is installed in your pc</h2>
+                <div>
+
+                    <a class="button1" th:href="${'echoprotocol://launch/:' + #request.getAttribute('lobbyId')}">
+                       Join as player
+                    </a>
+                    <a class="button1" th:href="${'echoprotocol://spec/:' + #request.getAttribute('lobbyId')}">
+                        Join as Spectator
+                    </a>
+
+                </div>
             </div>
-        </div>
-        <div class="flex-item" id="buttons">
-            <a th:href="*{#request.getParameter('lobbyID')}">Here</a>
         </div>
     </div>
 </div>
 
-
-</body>
-</html>
+</body></html>

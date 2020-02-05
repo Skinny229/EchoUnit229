@@ -1,13 +1,11 @@
 package com.skinnycodebase.EchoUnit229.models;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name="echo_game_public")
 public class EchoGamePublic {
 
     @Id
@@ -17,14 +15,25 @@ public class EchoGamePublic {
     //Discord player ID from the game generated
     private String playerID;
 
+    private String playerName;
+
+    private String confirmationCode;
+
+    //Guild id generated from
+    private String guildId;
+
+    private String messageId;
+
+    private boolean isConnectedToLiveClient;
+
     //EchoVR lobbyID
-    private String lobbyID;
+    private String sessionid;
 
     private LocalDateTime timeGameCreated;
 
-    private int currentPlayers;
+    private boolean isInUse;
 
-    private int desiredPlayers;
+    private LocalDateTime timeLastLiveUpdate;
 
 
     public long getId() {
@@ -43,12 +52,12 @@ public class EchoGamePublic {
         this.playerID = playerID;
     }
 
-    public String getLobbyID() {
-        return lobbyID;
+    public String getSessionid() {
+        return sessionid;
     }
 
-    public void setLobbyID(String lobbyID) {
-        this.lobbyID = lobbyID;
+    public void setSessionid(String lobbyID) {
+        this.sessionid = lobbyID;
     }
 
     public LocalDateTime getTimeGameCreated() {
@@ -59,11 +68,59 @@ public class EchoGamePublic {
         this.timeGameCreated = timeGameCreated;
     }
 
-    public int getCurrentPlayers() {
-        return currentPlayers;
+    public String getGuildId() {
+        return guildId;
     }
 
-    public void setCurrentPlayers(int currentPlayers) {
-        this.currentPlayers = currentPlayers;
+    public void setGuildId(String guildId) {
+        this.guildId = guildId;
+    }
+
+    public boolean isInUse() {
+        return isInUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        isInUse = inUse;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public LocalDateTime getTimeLastLiveUpdate() {
+        return timeLastLiveUpdate;
+    }
+
+    public void setTimeLastLiveUpdate(LocalDateTime timeLastLiveUpdate) {
+        this.timeLastLiveUpdate = timeLastLiveUpdate;
+    }
+
+    public boolean isConnectedToLiveClient() {
+        return isConnectedToLiveClient;
+    }
+
+    public void setConnectedToLiveClient(boolean connectedToLiveClient) {
+        isConnectedToLiveClient = connectedToLiveClient;
+    }
+
+    public String getConfirmationCode() {
+        return confirmationCode;
+    }
+
+    public void setConfirmationCode(String confirmationCode) {
+        this.confirmationCode = confirmationCode;
     }
 }
