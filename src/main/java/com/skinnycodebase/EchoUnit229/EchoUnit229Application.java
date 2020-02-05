@@ -38,6 +38,9 @@ public class EchoUnit229Application {
     @Autowired
     FiggyUtility figgyUtility;
 
+    @Autowired
+    LiveUpdateGameCheck liveUpdateGameCheck;
+
     public static JDA jda = null;
 
     /*
@@ -65,5 +68,9 @@ public class EchoUnit229Application {
         jda.addEventListener(new PrivateMessageHandler());
         jda.addEventListener(new PublicMessageIntake());
 
+        logger.info("Bot Startup Completed!");
+        logger.info("Starting the LiveGameVerifier");
+        Thread thread = new Thread(liveUpdateGameCheck);
+        thread.start();
     }
 }

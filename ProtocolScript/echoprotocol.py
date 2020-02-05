@@ -1,38 +1,71 @@
 import os, string, sys, subprocess, psutil, time, requests, json
 
 
-liveListingsUrl = "http://localhost:8080/api/v2/publicListing"
+liveListingsUrl = "http://echovrprotocol.com/api/v2/publicListing"
+closeLiveListUrl = "http://echovrprotocol.com/api/v2/closePublicListing"
+privateConfirmUrl = "http://echovrprotocol.com/api/v2/confirmPrivateGame"
 
+confirmCode = -1
+id = 0
+failCounter = 0
+maxFailedGetEchoJsonUpdateLoop = 3
 
 
 def getEchoJson():
 
     URL = "http://localhost/session"
+    try:
+        response = requests.get(url = URL)
+    except:
+        print("ConnectionError")
+        time.sleep(10)
+        return ""
+    return response.json()
 
-    response = requests.get(url = URL)
 
-    return  response.json()
-
-
-def postGameCreationPublic():
+def startPublicGameCreationProcess(echoArgs):
     gameData = getEchoJson()
 
     if not gameData:
         print("It seems either you dont have echo arena open or you're still in the lobby. Please join a private game")
         sys.exit()
 
-    if not gameData['private_match']:
-        print("Live updates are not enabled for public games")
-        sys.exit()
+   ## if not gameData['private_match']:
+     ##   print("Live updates are not enabled for public games")
+       ## sys.exit()
 
-    response = requests.post(url = liveListingsUrl, json  = genEchoResponseBody())
+
+    print("SENDING REQUEST TO ENABLE LIVE UPDATES PLEASE WAIT.....")
+    response = requests.post(url = liveListingsUrl, json  = genEchoLiveRequestJson(echoArgs, gameData))
     print("Response to POST REQUEST: " + response.text)
-    if response.text == '"CONFLICT"':
+    if response.text == '"ALREADY REPORTED"':
         print("Uh oh. Someone seems to still be running live updated. We don't need you... for now")
+        time.sleep(5)
         sys.exit()
+    if response.text == '"CONFLICT"':
+        print("Hmmm it seems like this request is expired. Use -creategame public")
+        time.sleep(5)
+        sys.exit()
+    print("Entering update loop. I'll keep you posted if anything changes")
     startGameUpdateLoop()
 
     return
+
+def genEchoLiveRequestJson(echoArgs, gameData):
+
+    liveRequestDetails = {
+
+        'confirmation_code' : echoArgs[5],
+        'id': echoArgs[4],
+        'discord_user_id' : echoArgs[3],
+        'guild_id' : echoArgs[2],
+        'sessionid' : gameData['sessionid'],
+        'client_name' : gameData['client_name']
+
+    }
+    print(liveRequestDetails)
+
+    return liveRequestDetails
 
 def genEchoResponseBody():
     data = getEchoJson()
@@ -58,7 +91,31 @@ def genEchoResponseBody():
 
 def startGameUpdateLoop():
     while True:
-        requests.put(url = liveListingsUrl, json  = genEchoResponseBody())
+        echoupdatebody = genEchoResponseBody()
+        if not echoupdatebody:
+            print("It seems getting data has failed trying again ....")
+            failCounter +=1
+            if failCounter == maxFailedGetEchoJsonUpdateLoop:
+                print("Max fail rate reached. exiting....")
+                x = {
+                    'id': id,
+                    'confirmation_code': confirmCode
+                }
+                requests.post(URL = closeLiveListUrl,  json = x)
+                timer.sleep(5)
+                sys.exit()
+
+
+
+        response = requests.put(url = liveListingsUrl, json  = echoupdatebody)
+        if response.text == '"MOVED PERMANENTLY "':
+            print('Game has been deleted, thanks for using EchoUnit229!')
+            time.sleep(5)
+            break
+        if response.text == '"BAD REQUEST"':
+            print("It seems you left the private game. Leaving.....")
+            time.sleep(5)
+            break
     return
 
 
@@ -110,28 +167,51 @@ def isEchoRunning():
 def launchGame(lobbyid):
     restartEchoIfRunning()
     time.sleep(2)
+    print("Launchin game....")
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid])
+    return
+
+
+def confirmPrivateGame(echoArgs):
+
+    gameData = getEchoJson()
+
+    privateConfirmObject = {
+        'sessionid': gameData['sessionid'],
+        'discord_user_id': echoArgs[2],
+        'confirmation_code': echoArgs[4],
+        'id': echoArgs[3]
+    }
+
+    requests.post(url = privateConfirmUrl , json = privateConfirmObject)
+        
     return
 
 def launchGameSpectator(lobbyid):
     restartEchoIfRunning()
     time.sleep(2)
+    print("Spectating game.....")
     subprocess.run([getEchoExe(),"-lobbyid", lobbyid, "-spectatorstream"])
     return
 
 def startEchoProtocol():
 
+    print("\n" +" ######   ####   #    #   ####\n" +" #       #    #  #    #  #    #\n" + " #####   #       ######  #    #\n" +" #       #       #    #  #    #\n" +" #       #    #  #    #  #    #\n" +" ######   ####   #    #   ####\n" +"\n")
+    print("\n" + " #####   #####    ####    #####   ####    ####    ####   #\n" +  " #    #  #    #  #    #     #    #    #  #    #  #    #  #\n" +  " #    #  #    #  #    #     #    #    #  #       #    #  #\n" +    " #####   #####   #    #     #    #    #  #       #    #  #\n" +     " #       #   #   #    #     #    #    #  #    #  #    #  #\n" +   " #       #    #   ####      #     ####    ####    ####   ######\n" +"\n")
+    print("Version 1.0 Coded by Skinny assisted by Kungg")
 
     echoArgs = sys.argv[1].split(':')
 
     action = echoArgs[1]
 
-    if action == "//launch":
+    if action == "//launch/":
         launchGame(echoArgs[2])
-    if action == "//spec":
+    if action == "//spec/":
         launchGameSpectator(echoArgs[2])
-    if action == "//createpub":
-        postGameCreationPublic()
+    if action == "//createpub/":
+        startPublicGameCreationProcess(echoArgs)
+    if action == "//confirmPrivate/":
+        confirmPrivateGame(echoArgs)
     sys.exit()
 
 

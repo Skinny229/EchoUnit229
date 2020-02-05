@@ -17,10 +17,14 @@ public class EchoGamePublic {
 
     private String playerName;
 
+    private String confirmationCode;
+
     //Guild id generated from
     private String guildId;
 
     private String messageId;
+
+    private boolean isConnectedToLiveClient;
 
     //EchoVR lobbyID
     private String sessionid;
@@ -102,5 +106,21 @@ public class EchoGamePublic {
 
     public void setTimeLastLiveUpdate(LocalDateTime timeLastLiveUpdate) {
         this.timeLastLiveUpdate = timeLastLiveUpdate;
+    }
+
+    public boolean isConnectedToLiveClient() {
+        return isConnectedToLiveClient;
+    }
+
+    public void setConnectedToLiveClient(boolean connectedToLiveClient) {
+        isConnectedToLiveClient = connectedToLiveClient;
+    }
+
+    public String getConfirmationCode() {
+        return confirmationCode;
+    }
+
+    public void setConfirmationCode(String confirmationCode) {
+        this.confirmationCode = confirmationCode;
     }
 }
