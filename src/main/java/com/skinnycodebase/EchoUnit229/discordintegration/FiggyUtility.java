@@ -16,6 +16,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,8 @@ import java.util.Random;
 @Component
 public class FiggyUtility {
 
+
+    private static final Logger logger = LoggerFactory.getLogger(FiggyUtility.class);
 
     private static EchoGameService echoGameService;
     private static GuildConfigService guildService;
@@ -62,10 +66,16 @@ public class FiggyUtility {
         //@role mention if it exists
         String mentionRole = "";
         String mentionRoleId = config.getMentionRoleID();
-        if (mentionRoleId != null)
-            mentionRole = guild.getRoleById(mentionRoleId).getAsMention();
+        if (mentionRoleId != null) {
+            try {
+                mentionRole = guild.getRoleById(mentionRoleId).getAsMention();
+            } catch (Exception e) {
+                logger.error("Guild registered not found");
+                mentionRole = null;
+            }
+        }
 
-        //Delete messages within channel
+        //Delete Bot messages within channel
         assert listingChanel != null;
         for (Message msg : listingChanel.getIterableHistory()) {
             if (Objects.requireNonNull(msg.getMember()).getId().equals(DeploymentSettings.BOT_ID))
@@ -111,7 +121,7 @@ public class FiggyUtility {
 
         builder.setColor(new Color(0, 217, 243));
 
-        String link = body.getPlayers().length  >= maxPlayers ? " " : createLinkHttp(game.getSessionid());
+        String link = body.getPlayers().length >= maxPlayers ? " " : createLinkHttp(game.getSessionid());
 
         //Generate link to join the game
         builder.setTitle(game.getPlayerName() + "'s game(if it's blue click me for the website version)", link);
@@ -120,7 +130,7 @@ public class FiggyUtility {
         builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
 
         String status;
-        switch(body.getGame_status()){
+        switch (body.getGame_status()) {
             case "pre_match":
                 status = "Waiting to start....";
                 break;
@@ -128,7 +138,7 @@ public class FiggyUtility {
                 status = "Playing";
                 break;
             case "score":
-                status  = "Gooooooaaaaal";
+                status = "Gooooooaaaaal";
                 break;
             case "round_start":
                 status = "In the tubes, ready to launch!";
@@ -152,9 +162,9 @@ public class FiggyUtility {
 
         builder.addField("Game Status", status, true);
 
-        builder.addField("Score", String.format("Orange [%s] - [%s] Blue", body.getOrange_points(), body.getBlue_points()), false );
+        builder.addField("Score", String.format("Orange [%s] - [%s] Blue", body.getOrange_points(), body.getBlue_points()), false);
 
-        builder.addField("Game Clock" , body.getGame_clock_display(), false);
+        builder.addField("Game Clock", body.getGame_clock_display(), false);
 
         StringBuilder playerList = new StringBuilder();
         playerList.append(" ");
@@ -163,18 +173,17 @@ public class FiggyUtility {
             playerSize = body.getPlayers().length;
             for (String player : body.getPlayers())
                 playerList.append(player.equals("Kungg") ? "Kungg aka 'Choke Master'" : player).append("\n");
-        }
-            else
-                playerSize = 0;
+        } else
+            playerSize = 0;
 
 
-        builder.addField(String.format("Players [%s]",playerSize), playerList.toString(), false);
+        builder.addField(String.format("Players [%s]", playerSize), playerList.toString(), false);
 
 
         String directLink = playerSize >= maxPlayers ? "Full Game" : createLinkEchoProtocol(body.getSessionid());
 
 
-        builder.addField("Direct Join Link", directLink,false);
+        builder.addField("Direct Join Link", directLink, false);
 
         return builder;
     }
@@ -196,7 +205,7 @@ public class FiggyUtility {
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
 
-    public static String createLinkEchoProtocol(String sessionid){
+    public static String createLinkEchoProtocol(String sessionid) {
         return String.format("<echoprotocol://launch:%s>", sessionid);
     }
 
@@ -208,7 +217,7 @@ public class FiggyUtility {
         guildService.registerServer(config);
     }
 
-    public static void registerPublicGame( String userId, String guildId) {
+    public static void registerPublicGame(String userId, String guildId) {
         EchoGamePublic game = new EchoGamePublic();
         game.setSessionid("no");
         game.setPlayerID(userId);
@@ -255,11 +264,8 @@ public class FiggyUtility {
             FiggyUtility.updateAllPublicGamesList(guild);
             privateMessage(user, "Game deleted");
 
-        }
-        else
+        } else
             privateMessage(user, "No active game found");
-
-
 
 
     }
@@ -284,12 +290,12 @@ public class FiggyUtility {
 
     static Random random = new Random();
 
-    public static String createPublicGameConfirmationLink(Guild guild, User user){
+    public static String createPublicGameConfirmationLink(Guild guild, User user) {
         StringBuilder result = new StringBuilder();
         EchoGamePublic game = echoGameService.getPublicGameByUserId(user.getId());
         long id = game.getId();
         StringBuilder confirmationCode = new StringBuilder();
-        for(int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
             confirmationCode.append(((char) random.nextInt(127) + 1));
 
         game.setConfirmationCode(confirmationCode.toString());

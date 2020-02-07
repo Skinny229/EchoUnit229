@@ -21,7 +21,7 @@ public class Help  {
                     "\t* This bot will PM you a confirmation code, click on it to start the live updates, \n\tSmake sure you're in a private game!"+
                     "\n\t* Your friends will now be able to join through the public listings\n\n");
         msg.append("* -delmygame \n\t * deletes active public game in the Guild's public listings\n\n" +
-                "\n\n -install \n\t* Get the install link");
+                "\n\n* -install \n\t* Get the install link");
         msg.append("# TO JOIN GAMES\n\n");
         msg.append("1) Click on the links either by pm or in the public listings\n");
         msg.append("2) If you have clicked on the website, click on the join as player option (Make sure you have the echo protocol installed)\n\n");
