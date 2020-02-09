@@ -59,6 +59,11 @@ public class RedeployHandler extends ListenerAdapter {
             config.setMentionRoleID("645047793500815387");
             config.setLastGameCount(0);
             FiggyUtility.saveConfig(config);
+        }else if(configOptional.isPresent()){
+            GuildConfig config = configOptional.get();
+            config.setGuildName(event.getGuild().getName());
+            config.setLastGameCount(0);
+            FiggyUtility.saveConfig(config);
         }
         FiggyUtility.updateAllPublicGamesList(event.getGuild());
 
