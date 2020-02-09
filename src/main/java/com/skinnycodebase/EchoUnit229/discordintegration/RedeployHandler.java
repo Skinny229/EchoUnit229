@@ -50,7 +50,8 @@ public class RedeployHandler extends ListenerAdapter {
                             "where `[id]` is the text channel id\n" +
                             "This will automatically enable your public listings, which I recommend only im able to type in.");
             return;
-        }else if(event.getGuild().getId().equals(DeploymentSettings.ESO_GUILD_ID)){
+        }else if(event.getGuild().getId().equals(DeploymentSettings.ESO_GUILD_ID)
+        ){
             GuildConfig config = new GuildConfig();
             config.setId(1);
             config.setGuildId(event.getGuild().getId());
