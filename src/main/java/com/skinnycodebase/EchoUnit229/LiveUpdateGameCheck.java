@@ -4,7 +4,6 @@ import com.skinnycodebase.EchoUnit229.models.EchoGamePublic;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -29,16 +28,22 @@ public class LiveUpdateGameCheck implements Runnable{
 
         while(true) {
             try {
-                Thread.sleep(30000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            for (EchoGamePublic game : echoGameService.getAllPublicGames())
-                if (game.isConnectedToLiveClient() && game.isInUse() && ChronoUnit.SECONDS.between(game.getTimeLastLiveUpdate(), LocalDateTime.now()) >= 30) {
+            for (EchoGamePublic game : echoGameService.findAllActivePublic())
+                if (
+                        ( !game.isConnectedToLiveClient() &&
+                                ChronoUnit.SECONDS.between(game.getTimeGameCreated(), LocalDateTime.now()) >= 180
+                                )||
+                        game.isConnectedToLiveClient() &&
+                        ChronoUnit.SECONDS.between(game.getTimeLastLiveUpdate(), LocalDateTime.now()) >= 60) {
                     logger.info("Found Game to decommission!");
+                    logger.info(game.toString());
                     echoGameService.decommissionGame(game);
-                    logger.info("Game created by [{}] on [{}] deleted", game.getPlayerName(), game.getGuildId());
+                    logger.info("Game created by [{}] with id [{}] deleted", game.getPlayerNameDiscord(), game.getGuildId());
                 }
 
         }

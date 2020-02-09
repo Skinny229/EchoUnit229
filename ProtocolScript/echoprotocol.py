@@ -1,9 +1,9 @@
 import os, string, sys, subprocess, psutil, time, requests, json
 
 
-liveListingsUrl = "http://echovrprotocol.com/api/v2/publicListing"
-closeLiveListUrl = "http://echovrprotocol.com/api/v2/closePublicListing"
-privateConfirmUrl = "http://echovrprotocol.com/api/v2/confirmPrivateGame"
+liveListingsUrl = "http://localhost:8080/api/v2/publicListing"
+closeLiveListUrl = "http://localhost:8080/api/v2/closePublicListing"
+privateConfirmUrl = "http://localhost:8080/api/v2/confirmPrivateGame"
 
 confirmCode = -1
 id = 0
@@ -29,9 +29,9 @@ def startPublicGameCreationProcess(echoArgs):
         time.sleep(10)
         sys.exit()
 
-    if not gameData['private_match']:
-       print("Live updates are not enabled for public games")
-       sys.exit()
+   ## if not gameData['private_match']:
+     ##  print("Live updates are not enabled for public games")
+      ## sys.exit()
 
 
     print("SENDING REQUEST TO ENABLE LIVE UPDATES PLEASE WAIT.....")
@@ -72,10 +72,13 @@ def genEchoResponseBody():
     if not data:
         return ""
 
-    if 'players' in data['teams'][1]:
+    if 'players' in data['teams'][1] and 'players' in data['teams'][0]:
         players = [player['name'] for team in data['teams'] for player in team['players']]
-    else:
+    elif 'players' in data['teams'][1]:
+        players = [player['name'] for player in data['teams'][1]['players']]
+    elif 'players' in data['teams'][0]:
         players = [player['name'] for player in data['teams'][0]['players']]
+	
 
     matchdetails = {
         'sessionid' : data['sessionid'],

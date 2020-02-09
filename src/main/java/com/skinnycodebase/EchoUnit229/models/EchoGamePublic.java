@@ -15,7 +15,9 @@ public class EchoGamePublic {
     //Discord player ID from the game generated
     private String playerID;
 
-    private String playerName;
+    private String playerNameOculus;
+
+    private String playerNameDiscord;
 
     private String confirmationCode;
 
@@ -84,12 +86,12 @@ public class EchoGamePublic {
         isInUse = inUse;
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public String getPlayerNameOculus() {
+        return playerNameOculus;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setPlayerNameOculus(String playerName) {
+        this.playerNameOculus = playerName;
     }
 
     public String getMessageId() {
@@ -122,5 +124,13 @@ public class EchoGamePublic {
 
     public void setConfirmationCode(String confirmationCode) {
         this.confirmationCode = confirmationCode;
+    }
+
+    public String getPlayerNameDiscord() {
+        return playerNameDiscord;
+    }
+
+    public void setPlayerNameDiscord(String playerNameDiscord) {
+        this.playerNameDiscord = playerNameDiscord;
     }
 }

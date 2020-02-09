@@ -1,11 +1,6 @@
 package com.skinnycodebase.EchoUnit229;
 
-import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
-import com.skinnycodebase.EchoUnit229.discordintegration.PublicMessageIntake;
-import com.skinnycodebase.EchoUnit229.discordintegration.PrivateMessageHandler;
-import com.skinnycodebase.EchoUnit229.discordintegration.RedeployHandler;
-import com.skinnycodebase.EchoUnit229.discordintegration.commands.CreateGame;
-import com.skinnycodebase.EchoUnit229.discordintegration.commands.DelMyGame;
+import com.skinnycodebase.EchoUnit229.discordintegration.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
@@ -16,7 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
 
@@ -65,6 +59,7 @@ public class EchoUnit229Application {
         * */
         DeploymentSettings.BOT_ID = jda.getSelfUser().getId();
         jda.addEventListener(new RedeployHandler());
+        jda.addEventListener(new OnGuildJoinHandler());
         jda.addEventListener(new PrivateMessageHandler());
         jda.addEventListener(new PublicMessageIntake());
 

@@ -2,7 +2,6 @@ package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 
 import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
-import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +38,11 @@ public class CreateGame {
             }
 
 
-            if (!FiggyUtility.hasActiveGameInGuild(event.getGuild(), event.getAuthor()))
+            if (!FiggyUtility.hasActiveGame(event.getAuthor()))
 
                 FiggyUtility.registerPublicGame(event.getAuthor().getId(), event.getGuild().getId());
             else {
-                FiggyUtility.privateMessage(event.getAuthor(), "It seems you have an active game, use -delmygame on the current guild to delete it");
+                FiggyUtility.privateMessage(event.getAuthor(), "It seems you have an active game somewhere, you cant have more than 1!");
                 return;
             }
 
@@ -53,7 +52,8 @@ public class CreateGame {
 
             //Notify player that the game has been created
             String plyMention = event.getAuthor().getAsMention();
-                event.getMessage().getChannel().sendMessage("Game confirmation code has been sent to you " + plyMention).queue();
+                event.getMessage().getChannel().sendMessage("Game confirmation code has been sent to you " + plyMention +"\n" +
+                        "Please note that this link will expire in 3 minutes").queue();
 
 
         } else if (type.equals("private")) {

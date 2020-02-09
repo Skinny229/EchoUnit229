@@ -41,6 +41,7 @@ public class RedeployHandler extends ListenerAdapter {
             User serverOwner = event.getGuild().getOwner().getUser();
             GuildConfig newConfig = new GuildConfig();
             newConfig.setGuildId(event.getGuild().getId());
+            newConfig.setGuildName(event.getGuild().getName());
             newConfig.setLastGameCount(0);
             FiggyUtility.saveConfig(newConfig);
             FiggyUtility.privateMessage(serverOwner,
@@ -51,6 +52,7 @@ public class RedeployHandler extends ListenerAdapter {
             return;
         }else if(event.getGuild().getId().equals(DeploymentSettings.ESO_GUILD_ID)){
             GuildConfig config = new GuildConfig();
+            config.setId(1);
             config.setGuildId(event.getGuild().getId());
             config.setPublicListingChannelId("661307549496115232");
             config.setMentionRoleID("645047793500815387");
@@ -59,7 +61,7 @@ public class RedeployHandler extends ListenerAdapter {
         }
         FiggyUtility.updateAllPublicGamesList(event.getGuild());
 
-
+        
 
     }
 

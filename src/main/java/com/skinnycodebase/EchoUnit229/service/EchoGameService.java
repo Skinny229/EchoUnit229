@@ -40,12 +40,24 @@ public class EchoGameService {
 
     }
 
-    public boolean hasActivePublicIn(String guildid, String userid){
-        for(EchoGamePublic pub : findAllActivePublic(guildid))
+    public ArrayList<EchoGamePublic> findAllActivePublic( ) {
+        ArrayList<EchoGamePublic> list = new ArrayList<>();
+        for (EchoGamePublic gamePublic : echoGamePublicRepository.findAll())
+            if (gamePublic.isInUse())
+                list.add(gamePublic);
+        return list;
+
+    }
+
+
+
+    public boolean hasActivePublicIn( String userid){
+        for(EchoGamePublic pub : findAllActivePublic())
             if(pub.getPlayerID().equals(userid))
                 return true;
         return false;
     }
+
 
     public void savePublic(EchoGamePublic game) {
         echoGamePublicRepository.save(game);
@@ -55,6 +67,7 @@ public class EchoGameService {
         for (EchoGamePublic game : findAllActivePublic(guildId))
             if (game.getPlayerID().equals(discordPlayerId)) {
                 game.setInUse(false);
+                game.setConnectedToLiveClient(false);
                 savePublic(game);
                 return true;
             }
@@ -71,7 +84,6 @@ public class EchoGameService {
 
 
     public EchoGamePublic getPublicGameBySessionId(String sessionid) {
-
         for(EchoGamePublic pub : echoGamePublicRepository.findAll())
             if(pub.getSessionid().equals(sessionid))
                 return pub;
@@ -86,7 +98,10 @@ public class EchoGameService {
     }
 
     public EchoGamePublic getPublicGameById(long id){
-        return echoGamePublicRepository.findById(id).get();
+        for(EchoGamePublic game : getAllPublicGames())
+            if(game.getId() == id)
+                return game;
+            return null;
     }
 
     public Iterable<EchoGamePublic> getAllPublicGames(){
@@ -96,4 +111,25 @@ public class EchoGameService {
     public void decommissionGame(EchoGamePublic game){
         decommissionGame(game.getGuildId(),game.getPlayerID());
     }
-}
+
+    public EchoGamePublic getGameByUserGuild(String discord_user_id, String guildid) {
+
+        for(EchoGamePublic game : echoGamePublicRepository.findAll())
+            if(game.getPlayerID().equals(discord_user_id) && game.getGuildId().equals(guildid)&& game.isInUse())
+                return game;
+        return null;
+    }
+
+    public EchoGamePublic getPublicActiveGameByOculusName(String oculusName) {
+        for(EchoGamePublic game : findAllActivePublic())
+            if(game.getPlayerNameOculus().equals(oculusName))
+                return game;
+        return null;
+    }
+
+    public EchoGamePublic getPublicLiveGameByOculusName(String oculusName) {
+        for(EchoGamePublic game : getAllPublicGames())
+            if(game.getPlayerNameOculus().equals(oculusName)&& game.isConnectedToLiveClient())
+                return game;
+        return null;
+    }}

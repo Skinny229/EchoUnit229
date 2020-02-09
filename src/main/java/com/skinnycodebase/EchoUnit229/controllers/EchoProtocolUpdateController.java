@@ -6,7 +6,6 @@ import com.skinnycodebase.EchoUnit229.models.responsebody.EchoCloseLiveListingRe
 import com.skinnycodebase.EchoUnit229.models.responsebody.EchoLiveRequestBody;
 import com.skinnycodebase.EchoUnit229.models.responsebody.EchoUpdateResponseBody;
 import com.skinnycodebase.EchoUnit229.service.EchoGameService;
-import com.skinnycodebase.EchoUnit229.service.GuildConfigService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,12 +32,15 @@ public class EchoProtocolUpdateController {
         if(body.getSessionid() == null || body.getClient_name() == null)
             return HttpStatus.BAD_REQUEST;
 
-        // If the game has already been decommissioned
-       EchoGamePublic game = echoGameService.getPublicGameBySessionId(body.getSessionid());
+
+        EchoGamePublic game = echoGameService.getPublicLiveGameByOculusName(body.getClient_name());
         if(game != null && !game.isInUse()) {
             echoGameService.decommissionGame(game.getGuildId(),game.getPlayerID());
-            return HttpStatus.MOVED_PERMANENTLY;
-
+            return HttpStatus.BAD_REQUEST;
+        }
+        if(game == null)
+        {
+            return HttpStatus.BAD_REQUEST;
         }
 
         FiggyUtility.updateAutoPublicGame(body);
@@ -55,9 +57,9 @@ public class EchoProtocolUpdateController {
         EchoGamePublic game = echoGameService.getPublicGameById(body.getId());
         EchoGamePublic sessionIdGame = echoGameService.getPublicGameBySessionId(body.getSessionid());
 
-       if(!game.isInUse())
+       if(!game.isInUse() || (sessionIdGame!=null && sessionIdGame.isConnectedToLiveClient()))
            return HttpStatus.CONFLICT;
-       else if(sessionIdGame != null &&  sessionIdGame.isInUse() && sessionIdGame.isConnectedToLiveClient())
+       else if(sessionIdGame != null &&  sessionIdGame.isInUse() && sessionIdGame.isConnectedToLiveClient() && game.getId() != sessionIdGame.getId())
            return HttpStatus.ALREADY_REPORTED;
        else if(game.getConfirmationCode().equals(body.getConfirmation_code()))
        {

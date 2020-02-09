@@ -91,7 +91,7 @@ public class FiggyUtility {
             builder.setColor(new Color(243, 0, 17));
 
             //Generate link to join the game
-            builder.setTitle(game.getPlayerName() + "'s game(click me)", createLinkHttp(game.getSessionid()));
+            builder.setTitle(game.getPlayerNameOculus() + "'s game(click me)", createLinkHttp(game.getSessionid()));
 
             //Post time since it was created
             builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
@@ -114,7 +114,7 @@ public class FiggyUtility {
         String link = body.getPlayers().length  >= maxPlayers ? " " : createLinkHttp(game.getSessionid());
 
         //Generate link to join the game
-        builder.setTitle(game.getPlayerName() + "'s game(if it's blue click me for the website version)", link);
+        builder.setTitle(game.getPlayerNameOculus() + "'s game(if it's blue click me for the website version)", link);
 
         //Post time since it was created
         builder.addField("Time since creation", ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) + " MINS", true);
@@ -210,10 +210,13 @@ public class FiggyUtility {
 
     public static void registerPublicGame( String userId, String guildId) {
         EchoGamePublic game = new EchoGamePublic();
+        Guild guild = EchoUnit229Application.jda.getGuildById(guildId);
         game.setSessionid("no");
         game.setPlayerID(userId);
+        game.setPlayerNameDiscord(guild.getMemberById(userId).getEffectiveName());
         game.setGuildId(guildId);
         game.setTimeGameCreated(LocalDateTime.now());
+        game.setTimeLastLiveUpdate(LocalDateTime.now());
         game.setInUse(true);
         game.setConnectedToLiveClient(false);
         echoGameService.savePublic(game);
@@ -221,19 +224,18 @@ public class FiggyUtility {
 
 
     public static void confirmAutoPublicGame(EchoLiveRequestBody body) {
-        EchoGamePublic newGame = echoGameService.getPublicGameByUserId(body.getDiscord_user_id());
+        EchoGamePublic newGame = echoGameService.getGameByUserGuild(body.getDiscord_user_id(),body.getGuild_id());
         //For now default to echo scrim organizer
         newGame.setGuildId(body.getGuild_id());
         newGame.setConnectedToLiveClient(true);
-        newGame.setPlayerName(body.getClient_name());
+        newGame.setPlayerNameOculus(body.getClient_name());
         newGame.setSessionid(body.getSessionid());
-        newGame.setTimeGameCreated(LocalDateTime.now());
         echoGameService.savePublic(newGame);
         updateAllPublicGamesList(EchoUnit229Application.jda.getGuildById(body.getGuild_id()));
     }
 
     public static void updateAutoPublicGame(EchoUpdateResponseBody body) {
-        EchoGamePublic pub = echoGameService.getPublicGameBySessionId(body.getSessionid());
+        EchoGamePublic pub = echoGameService.getPublicActiveGameByOculusName(body.getClient_name());
         Guild guild = EchoUnit229Application.jda.getGuildById(pub.getGuildId());
         GuildConfig config = getConfig(guild.getId()).get();
         pub.setTimeLastLiveUpdate(LocalDateTime.now());
@@ -245,8 +247,8 @@ public class FiggyUtility {
 
     }
 
-    public static boolean hasActiveGameInGuild(Guild guild, User user) {
-        return echoGameService.hasActivePublicIn(guild.getId(), user.getId());
+    public static boolean hasActiveGame(User user) {
+        return echoGameService.hasActivePublicIn(user.getId());
     }
 
     public static void decommissionGame(Guild guild, User user) {
@@ -258,10 +260,6 @@ public class FiggyUtility {
         }
         else
             privateMessage(user, "No active game found");
-
-
-
-
     }
 
     public static void privateMessage(User user, String message) {

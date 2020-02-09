@@ -18,6 +18,8 @@ public class GuildConfig {
 
     private int lastGameCount;
 
+    private String guildName;
+
 
     public long getId() {
         return id;
@@ -57,5 +59,14 @@ public class GuildConfig {
 
     public void setLastGameCount(int lastGameCount) {
         this.lastGameCount = lastGameCount;
+    }
+
+
+    public String getGuildName() {
+        return guildName;
+    }
+
+    public void setGuildName(String guildName) {
+        this.guildName = guildName;
     }
 }
