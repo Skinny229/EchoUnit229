@@ -129,7 +129,7 @@ public class EchoGameService {
 
     public EchoGamePublic getPublicLiveGameByOculusName(String oculusName) {
         for(EchoGamePublic game : getAllPublicGames())
-            if(game.getPlayerNameOculus().equals(oculusName)&& game.isConnectedToLiveClient())
+            if(game.getPlayerNameOculus() != null && game.getPlayerNameOculus().equals(oculusName) && game.isConnectedToLiveClient())
                 return game;
         return null;
     }}

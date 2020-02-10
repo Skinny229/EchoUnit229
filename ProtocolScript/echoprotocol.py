@@ -1,9 +1,9 @@
 import os, string, sys, subprocess, psutil, time, requests, json
 
 
-liveListingsUrl = "http://localhost:8080/api/v2/publicListing"
-closeLiveListUrl = "http://localhost:8080/api/v2/closePublicListing"
-privateConfirmUrl = "http://localhost:8080/api/v2/confirmPrivateGame"
+liveListingsUrl = "http://echovrprotocol.com/api/v2/publicListing"
+closeLiveListUrl = "http://echovrprotocol.com/api/v2/closePublicListing"
+privateConfirmUrl = "http://echovrprotocol.com/api/v2/confirmPrivateGame"
 
 confirmCode = -1
 id = 0
