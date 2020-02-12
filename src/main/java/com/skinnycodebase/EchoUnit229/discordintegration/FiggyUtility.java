@@ -75,6 +75,8 @@ public class FiggyUtility {
             }
         }
 
+
+
         //Delete Bot messages within channel
         assert listingChanel != null;
         for (Message msg : listingChanel.getIterableHistory()) {
@@ -90,8 +92,6 @@ public class FiggyUtility {
             if (ChronoUnit.MINUTES.between(game.getTimeGameCreated(), LocalDateTime.now()) < 45)
                 publicGames.add(game);
         }
-
-        //if(publicGames.size() > )
 
         //Create a Embed message for every joinable public game and post it in the LFGBOT channel
         for (EchoGamePublic game : publicGames) {
@@ -151,7 +151,7 @@ public class FiggyUtility {
                 break;
             case "pre_sudden_death":
             case "sudden_death":
-                status = "SUDDENT DEATH";
+                status = "SUDDEN DEATH";
                 break;
             case "post_sudden_death":
                 status = (body.getBlue_points() > body.getOrange_points() ? "Orange" : "Blue") + " choked hard";
@@ -202,6 +202,8 @@ public class FiggyUtility {
     }
 
     public static String createLinkHttp(String ID) {
+        if(ID == null)
+            ID = "";
         return "http://echovrprotocol.com/api/" + DeploymentSettings.API_CONTROLLER_VERSION + "/joinGame?lobbyId=" + ID;
     }
 
