@@ -3,68 +3,94 @@ package com.skinnycodebase.EchoUnit229.discordintegration.commands;
 import com.skinnycodebase.EchoUnit229.DeploymentSettings;
 import com.skinnycodebase.EchoUnit229.discordintegration.FiggyUtility;
 import com.skinnycodebase.EchoUnit229.models.GuildConfig;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class Set {
 
-    public static void run(MessageReceivedEvent event){
+    public static void run(MessageReceivedEvent event) {
 
+
+        long valueId = -1;
+
+        Member member = event.getMember();
         User user = event.getAuthor();
 
-
-        if( !event.getAuthor().getId().equals(DeploymentSettings.DEV_ID) && !(event.getGuild().getOwner().getUser().equals(user))) {
-            FiggyUtility.privateMessage(user, "It seems you cannot execute the command as you dont have permissions");
+        if (member.hasPermission(Permission.ADMINISTRATOR) && !user.getId().equals(DeploymentSettings.DEV_ID)) {
+            FiggyUtility.privateMessage(user, "It seems you do not have administrator powers. So I cant let you sorry");
             return;
         }
 
         ArrayList<String> cmdbreakdown = new ArrayList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 
-        String setType = cmdbreakdown.get(1);
+        String settingType = cmdbreakdown.get(1);
 
-        String value = cmdbreakdown.get(2);
+        String settingValue = cmdbreakdown.get(2);
 
+        //Confirm that we have the guild config other wise exit
         Optional<GuildConfig> configOp = FiggyUtility.getConfig(event.getGuild().getId());
-
-        if(!configOp.isPresent()){
-
-            FiggyUtility.privateMessage(event.getAuthor(), "Something has gone really really wrong.\n " +
-                    "Please Copy paste skinny with the following " +
-                    "```\nConfig Retrieve Failure, ServerID: " + event.getGuild().getId()+
+        if (!configOp.isPresent()) {
+            FiggyUtility.privateMessage(event.getAuthor(), "Something has gone really really wrong.\n " + "Please Copy paste skinny with the following " +
+                    "```\nConfig Retrieve Failure, ServerID: " + event.getGuild().getId() +
                     "\n```");
-
             return;
         }
+        GuildConfig guildConfig = configOp.get();
 
-        GuildConfig a = configOp.get();
 
-        switch(setType.toUpperCase())
-        {
+        //
+        switch (settingType.toUpperCase()) {
             case "LISTINGS":
-                if(event.getGuild().getTextChannelById(value) == null){
-                    FiggyUtility.privateMessage(user, "Invalid text channel");
+                List<TextChannel> channelByString = event.getGuild().getTextChannelsByName(settingValue, false);
+                TextChannel channelById = event.getGuild().getTextChannelById(settingValue);
+                if(channelByString.size() > 1)
+                {
+                    FiggyUtility.privateMessage(user, "Too many text channels with a similar name. Either be more specific or provide the id(Enabled in the discord developer mode)");
+                    return;
+                }else if(channelByString.size() == 1)
+                {
+                    guildConfig.setPublicListingChannelId(channelByString.get(0).getId());
+                }else if(channelById != null){
+                    guildConfig.setPublicListingChannelId(settingValue);
+                } else{
+                    FiggyUtility.privateMessage(user, "I cannot find anything with Name/ID similar to what you provided: " + settingValue);
                     return;
                 }
-                a.setPublicListingChannelId(value);
                 break;
             case "ROLE":
-                if(event.getGuild().getRoleById(value) == null){
-                    FiggyUtility.privateMessage(user, "Invalid ROLE");
+                List<Role> roleByString = event.getGuild().getRolesByName(settingValue, false);
+                Role roleById = event.getGuild().getRoleById(settingValue);
+                if(roleByString.size() > 1)
+                {
+                    FiggyUtility.privateMessage(user, "Too many roles with a similar name. Either be more specific or provide the id(Enabled in the discord developer mode)");
+                    return;
+                }else if(roleByString.size() == 1)
+                {
+                    guildConfig.setPublicListingChannelId(roleByString.get(0).getId());
+                }else if(roleById != null){
+                    guildConfig.setPublicListingChannelId(settingValue);
+                } else{
+                    FiggyUtility.privateMessage(user, "I cannot find anything with Name/ID similar to what you provided: " + settingValue);
                     return;
                 }
-                a.setMentionRoleID(value);
                 break;
             default:
-                FiggyUtility.privateMessage(user, "Invalid option");
+                FiggyUtility.privateMessage(user, "Invalid SET type");
                 return;
         }
-        FiggyUtility.saveConfig(a);
-        FiggyUtility.privateMessage(user, "Successful Set!");
+
+        FiggyUtility.saveConfig(guildConfig);
+        FiggyUtility.privateMessage(user, String.format("Successful [%s] set!", settingType));
+
 
     }
 }
+
+
+
