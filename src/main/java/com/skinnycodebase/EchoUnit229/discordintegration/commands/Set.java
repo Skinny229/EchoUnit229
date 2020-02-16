@@ -48,34 +48,40 @@ public class Set {
         switch (settingType.toUpperCase()) {
             case "LISTINGS":
                 List<TextChannel> channelByString = event.getGuild().getTextChannelsByName(settingValue, false);
-                TextChannel channelById = event.getGuild().getTextChannelById(settingValue);
-                if(channelByString.size() > 1)
-                {
+                TextChannel channelById;
+                try {
+                    channelById = event.getGuild().getTextChannelById(settingValue);
+                } catch (Exception e) {
+                    channelById = null;
+                }
+                if (channelByString.size() > 1) {
                     FiggyUtility.privateMessage(user, "Too many text channels with a similar name. Either be more specific or provide the id(Enabled in the discord developer mode)");
                     return;
-                }else if(channelByString.size() == 1)
-                {
+                } else if (channelByString.size() == 1) {
                     guildConfig.setPublicListingChannelId(channelByString.get(0).getId());
-                }else if(channelById != null){
+                } else if (channelById != null) {
                     guildConfig.setPublicListingChannelId(settingValue);
-                } else{
+                } else {
                     FiggyUtility.privateMessage(user, "I cannot find anything with Name/ID similar to what you provided: " + settingValue);
                     return;
                 }
                 break;
             case "ROLE":
                 List<Role> roleByString = event.getGuild().getRolesByName(settingValue, false);
-                Role roleById = event.getGuild().getRoleById(settingValue);
-                if(roleByString.size() > 1)
-                {
+                Role roleById;
+                try {
+                    roleById = event.getGuild().getRoleById(settingValue);
+                } catch (Exception e) {
+                    roleById = null;
+                }
+                if (roleByString.size() > 1) {
                     FiggyUtility.privateMessage(user, "Too many roles with a similar name. Either be more specific or provide the id(Enabled in the discord developer mode)");
                     return;
-                }else if(roleByString.size() == 1)
-                {
-                    guildConfig.setPublicListingChannelId(roleByString.get(0).getId());
-                }else if(roleById != null){
-                    guildConfig.setPublicListingChannelId(settingValue);
-                } else{
+                } else if (roleByString.size() == 1) {
+                    guildConfig.setMentionRoleID(roleByString.get(0).getId());
+                } else if (roleById != null) {
+                    guildConfig.setMentionRoleID(settingValue);
+                } else {
                     FiggyUtility.privateMessage(user, "I cannot find anything with Name/ID similar to what you provided: " + settingValue);
                     return;
                 }
