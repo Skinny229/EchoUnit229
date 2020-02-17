@@ -238,6 +238,7 @@ public class FiggyUtility {
         newGame.setGuildId(body.getGuild_id());
         newGame.setConnectedToLiveClient(true);
         newGame.setPlayerNameOculus(body.getClient_name());
+        newGame.setTimeLastLiveUpdate(LocalDateTime.now());
         newGame.setSessionid(body.getSessionid());
         echoGameService.savePublic(newGame);
         updateAllPublicGamesList(EchoUnit229Application.jda.getGuildById(body.getGuild_id()));
