@@ -25,7 +25,10 @@ public class PublicMessageIntake extends ListenerAdapter {
     public void onMessageReceived(@Nonnull MessageReceivedEvent event){
 
 
+
         String rawMsg = event.getMessage().getContentRaw();
+        if(event.getMessage().getMentionedRoles().get(0).getName().equals("Bois"))
+            event.getMessage().getTextChannel().sendMessage(":eyes:").queue();
         if(rawMsg.startsWith("-")){
 
             logger.info("Possible command attempt by [{}] with [{}]" , event.getAuthor().getName(), event.getMessage().getContentDisplay());
