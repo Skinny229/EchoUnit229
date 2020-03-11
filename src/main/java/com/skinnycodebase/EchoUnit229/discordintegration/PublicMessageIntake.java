@@ -60,6 +60,8 @@ public class PublicMessageIntake extends ListenerAdapter {
                 case "HELP":
                     Help.run(event);
                     break;
+                case "ROLL":
+                    Roll.run(event);
                 case "INSTALL":
                     Install.run(event);
                 default:

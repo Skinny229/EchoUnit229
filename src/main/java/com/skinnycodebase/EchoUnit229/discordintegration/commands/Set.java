@@ -22,6 +22,7 @@ public class Set {
         Member member = event.getMember();
         User user = event.getAuthor();
 
+
         if (member.hasPermission(Permission.ADMINISTRATOR) && !user.getId().equals(DeploymentSettings.DEV_ID)) {
             FiggyUtility.privateMessage(user, "It seems you do not have administrator powers. So I cant let you sorry");
             return;
