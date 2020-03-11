@@ -24,11 +24,11 @@ public class PublicMessageIntake extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event){
 
-
-
         String rawMsg = event.getMessage().getContentRaw();
-        if(event.getMessage().getMentionedRoles().get(0).getName().equals("Bois"))
-            event.getMessage().getTextChannel().sendMessage(":eyes:").queue();
+        //Put eyes if @bois is mentioned
+        if(!event.getMessage().getMentionedRoles().isEmpty()&& event.getMessage().getMentionedRoles().get(0).getName().equals("Bois"))
+            event.getMessage().getTextChannel().sendMessage(":eyes:").complete();
+
         if(rawMsg.startsWith("-")){
 
             logger.info("Possible command attempt by [{}] with [{}]" , event.getAuthor().getName(), event.getMessage().getContentDisplay());
